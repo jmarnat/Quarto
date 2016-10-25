@@ -77,12 +77,13 @@ round(_,_,Board,NumPlayer) :-
 	printGameOver(Winner,A,B,C).
 
 round(Interface,Heuristics,Board,NumPlayer) :-
-	askPiece(Interface,Board,NewPieceID),
+	askPiece(Interface,Heuristics,Board,NewPieceID),
+	
 	swapPlayer(NumPlayer,NewNumPlayer),
 
 	draw_board(Interface,Board),
 	nl,write("PLAYER "),write(NumPlayer),nl,
-	readPosition(Board,Row,Column),
+	readPosition(Interface,Heuristics,Board,Row,Column),
 	putPieceOnBoard(NewPieceID,Row,Column,Board,NewBoard),
 	draw_board(Interface,NewBoard),
 
@@ -95,16 +96,16 @@ round(Interface,Heuristics,Board,NumPlayer) :-
 * GETTING/SETTING *
 ******************/
 
-askPiece(inline,Board,PieceID) :-
+askPiece(inline,Heuristics,Board,PieceID) :-
 	printAvailablePieces(Board),
 	write("Enter a piece ID : "),
 	read(PieceID),
 	isAvailable(Board,PieceID).
 	%% debugHere.
 
-askPiece(inline,Board,PieceID) :-
+askPiece(inline,Heuristics,Board,PieceID) :-
 	write("This piece is not available! Try again!"),nl,
-	askPiece(inline,Board,PieceID).
+	askPiece(inline,Heuristics,Board,PieceID).
 
 
 
@@ -133,16 +134,16 @@ isFull(Board,Row,Col) :-
 	N > 0.
 
 
-readPosition(Board,Row,Col) :-
+readPosition(Interface,Heuristics,Board,Row,Col) :-
 	write("[row,col]? "),
 	read([Row,Col]), 
 	Row > 0, Row < 5,
 	Col > 0, Col < 5,
 	isEmpty(Board,Row,Col).
 
-readPosition(Board,Row,Col) :-
+readPosition(Interface,Heuristics,Board,Row,Col) :-
 	write("Nope! Try again..."),nl,
-	readPosition(Board,Row,Col).
+	readPosition(Interface,Heuristics,Board,Row,Col).
 
 
 putPieceOnBoard(PieceID,1,Column,[FirstLine|T1],[NewFirstLine|T1]) :-
