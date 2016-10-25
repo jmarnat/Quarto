@@ -67,50 +67,44 @@ debugHere :-
 * GAME PLAY BASIC ROUNDS *
 *************************/
 
-play(Interface,Heuristics) :-
-	round(Interface,Heuristics,[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
+play(Interface,Heuristics1,Heuristics2) :-
+	round(Interface,[Heuristics1,Heuristics2],[[0,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
 	%% round([[0,2,3,4],[5,0,7,0],[0,0,0,12],[13,0,15,0]],1).
 	%% round([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],1).
 
 
+getHeuristics([Heuristics1,_],1,Heuristics1).
+getHeuristics([_,Heuristics2],2,Heuristics2).
 
-round(_,_,Board,NumPlayer) :-
+round(inline,_,Board,NumPlayer) :-
+	%% debugHere,
 	check_win(Board,A,B,C),
 	swapPlayer(NumPlayer,Winner),
 	printGameOver(Winner,A,B,C).
 
-round(Interface,Heuristics,Board,NumPlayer) :-
-	askPiece(Interface,Heuristics,Board,PieceID),
+round(inline,HeuristicsTab,Board,NumPlayer) :-
+	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
+	nl,write("PLAYER "),write(NumPlayer),nl,
+	askPiece(Interface,Heuristics1,Board,PieceID),
 	
 	swapPlayer(NumPlayer,NewNumPlayer),
 
 	draw_board(Interface,Board),
-	nl,write("PLAYER "),write(NumPlayer),nl,
-	readPosition(Interface,Heuristics,Board,PieceID,Row,Column),
+	nl,write("PLAYER "),write(NewNumPlayer),nl,
+
+	getHeuristics(HeuristicsTab,NewNumPlayer,Heuristics2),
+	readPosition(Interface,Heuristics2,Board,PieceID,Row,Column),
 	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
 	draw_board(Interface,NewBoard),
 
 	%% check end
-	round(Interface,Heuristics,NewBoard,NewNumPlayer).
+	round(inline,HeuristicsTab,NewBoard,NewNumPlayer).
 
 
 
 /******************
 * GETTING/SETTING *
 ******************/
-
-askPiece(inline,human,Board,PieceID) :-
-	printAvailablePieces(Board),
-	write("Enter a piece ID : "),
-	read(PieceID),
-	isAvailable(Board,PieceID).
-	%% debugHere.
-
-askPiece(inline,human,Board,PieceID) :-
-	write("This piece is not available! Try again!"),nl,
-	askPiece(inline,human,Board,PieceID).
-
-
 
 swapPlayer(1,2).
 swapPlayer(2,1).
@@ -135,19 +129,6 @@ isEmpty(Board,Row,Col) :-
 isFull(Board,Row,Col) :-
 	getPieceID(Board,Row,Col,N),
 	N > 0.
-
-
-readPosition(inline,human,Board,_,Row,Col) :-
-	write("[row,col]? "),
-	read([Row,Col]), 
-	Row > 0, Row < 5,
-	Col > 0, Col < 5,
-	isEmpty(Board,Row,Col).
-
-readPosition(inline,human,Board,PieceID,Row,Col) :-
-	write("Nope! Try again..."),nl,
-	readPosition(inline,human,Board,PieceID,Row,Col).
-
 
 putPieceOnBoard(PieceID,1,Column,[FirstLine|T1],[NewFirstLine|T1]) :-
 	putPieceOnLine(PieceID,Column,FirstLine,NewFirstLine).

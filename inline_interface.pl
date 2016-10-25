@@ -1,33 +1,20 @@
 space :- write(' ').
 
-
-
-
 draw_middle_line :-
 	write(+-----+-----+-----+-----+), nl.
 
-/*
-draw_first_line :-
-	write(┏━━━━━┳━━━━━┳━━━━━┳━━━━━┓), nl.
-draw_middle_line :-
-	write(┣━━━━━╋━━━━━╋━━━━━╋━━━━━┫), nl.
-draw_last_line :-
-	write(┗━━━━━┻━━━━━┻━━━━━┻━━━━━┛), nl.
-*/
-
 draw_board(inline,[FirstRow|Tail]) :-
-	%% draw_first_line,
+	write('\e[033m'),
 	draw_middle_line,
 	draw_pieces_a(FirstRow),
 	draw_pieces_b(FirstRow),
-	draw_pieces_bis(Tail).
+	draw_pieces_bis(Tail),
+	write('\e[0m').
 
 draw_pieces_bis([]) :-
 	draw_middle_line.
-	%% draw_last_line.
 
 draw_pieces_bis([Row|Tail]) :-
-	%% draw_middle_line,
 	draw_middle_line,
 	draw_pieces_a(Row),
 	draw_pieces_b(Row),
@@ -57,10 +44,16 @@ draw_pieces_b([]) :-
 
 
 printAvailablePieces(Board) :-
-	write("[QUARTO] Available Pieces :"),
+	write('\e[033m'),
+	write('Available Pieces :'),
 	nl,
 	printAvailablePiecesBis(Board,1),
+	write('\e[0m'),
 	nl.
+
+
+
+
 
 printAvailablePiecesBis(_,17).
 printAvailablePiecesBis(Board,PieceID) :-
@@ -89,7 +82,7 @@ printPieceBis([FirstAttribute|Rest]) :-
 	printPieceBis(Rest).
 
 printGameOver(Winner,A,B,C) :-
-	write("*************************************"),nl,
+	write("\e[031m*************************************"),nl,
 	write("* GAME OVER * GAME OVER * GAME OVER *"),nl,
 	write("*************************************"),nl,
 	write("Player "),
@@ -99,4 +92,5 @@ printGameOver(Winner,A,B,C) :-
 		write(" pieces on the "),
 		write(C),
 		write("° "),
-		write(B).
+		write(B),
+	write("\e[0m"),nl.
