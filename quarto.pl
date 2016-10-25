@@ -18,6 +18,9 @@ attribute(empty,nul,' ').
 interface(inline).
 interface(graphical).
 
+player(human).
+player(random).
+
 %% playerType
 
 /**************************************
@@ -77,14 +80,14 @@ round(_,_,Board,NumPlayer) :-
 	printGameOver(Winner,A,B,C).
 
 round(Interface,Heuristics,Board,NumPlayer) :-
-	askPiece(Interface,Heuristics,Board,NewPieceID),
+	askPiece(Interface,Heuristics,Board,PieceID),
 	
 	swapPlayer(NumPlayer,NewNumPlayer),
 
 	draw_board(Interface,Board),
 	nl,write("PLAYER "),write(NumPlayer),nl,
-	readPosition(Interface,Heuristics,Board,Row,Column),
-	putPieceOnBoard(NewPieceID,Row,Column,Board,NewBoard),
+	readPosition(Interface,Heuristics,Board,PieceID,Row,Column),
+	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
 	draw_board(Interface,NewBoard),
 
 	%% check end
@@ -96,16 +99,16 @@ round(Interface,Heuristics,Board,NumPlayer) :-
 * GETTING/SETTING *
 ******************/
 
-askPiece(inline,Heuristics,Board,PieceID) :-
+askPiece(inline,human,Board,PieceID) :-
 	printAvailablePieces(Board),
 	write("Enter a piece ID : "),
 	read(PieceID),
 	isAvailable(Board,PieceID).
 	%% debugHere.
 
-askPiece(inline,Heuristics,Board,PieceID) :-
+askPiece(inline,human,Board,PieceID) :-
 	write("This piece is not available! Try again!"),nl,
-	askPiece(inline,Heuristics,Board,PieceID).
+	askPiece(inline,human,Board,PieceID).
 
 
 
@@ -134,16 +137,16 @@ isFull(Board,Row,Col) :-
 	N > 0.
 
 
-readPosition(Interface,Heuristics,Board,Row,Col) :-
+readPosition(inline,human,Board,_,Row,Col) :-
 	write("[row,col]? "),
 	read([Row,Col]), 
 	Row > 0, Row < 5,
 	Col > 0, Col < 5,
 	isEmpty(Board,Row,Col).
 
-readPosition(Interface,Heuristics,Board,Row,Col) :-
+readPosition(inline,human,Board,PieceID,Row,Col) :-
 	write("Nope! Try again..."),nl,
-	readPosition(Interface,Heuristics,Board,Row,Col).
+	readPosition(inline,human,Board,PieceID,Row,Col).
 
 
 putPieceOnBoard(PieceID,1,Column,[FirstLine|T1],[NewFirstLine|T1]) :-
@@ -174,7 +177,19 @@ isInBoard(Board,PieceID) :-
 isAvailable(Board,PieceID) :-
 	\+ isInBoard(Board,PieceID).
 
+getAvailablePieces(Board,ListOfPieces) :-
+	getAvailablePiecesBis(Board,ListOfPieces,1).
 
+getAvailablePiecesBis(_,[],17).
+getAvailablePiecesBis(Board,[PieceID|ListOfPieces],PieceID) :-
+	PieceID < 17,
+	NewPieceID is (PieceID + 1),
+	isAvailable(Board,PieceID),
+	getAvailablePiecesBis(Board,ListOfPieces,NewPieceID).
+getAvailablePiecesBis(Board,ListOfPieces,PieceID) :-
+	PieceID < 17,
+	NewPieceID is (PieceID + 1),
+	getAvailablePiecesBis(Board,ListOfPieces,NewPieceID).
 
 
 
