@@ -5,3 +5,15 @@
 3. then play by typing `play(inline,Heuristics1,Heuristics2)`, with Heuristics beeing :
   * human
   * random
+
+## TODO :
+* Interfaces :
+	[X] inline
+	[ ] GUI
+* Heuristics :
+	[X] human
+	[X] random
+	[ ] strategy (Anthony)
+	[ ] ??? (Clément)
+	[ ] &Alpha;&Beta; (Jérémie)
+	[ ] minimax (Josselin)
