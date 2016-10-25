@@ -1,15 +1,11 @@
-:- use_foreign_library(foreign(plOpenGL)).
+/*:- new(Window,picture('Hello World')),
+    send(Window,display,text('Welcome in Quarto!'),point(20,20)),
+    send(button(hello, message(@prolog, format, ’Hi There ’)), open),
+    send(Window,open).
+*/
 
-:- use_module(library(plOpenGL)).
-
-:- use_module(library(plGL_defs)).
-
-:- use_module(library(plGLU_defs)).
-
-:- use_module(library(plGLUT_defs)).
-
-:- use_module(library(plGL)).
-
-:- use_module(library(plGLU)).
-
-:- use_module(library(plGLUT)).
+askPiece(PieceID) :-
+    new(Dialog,dialog('Choose a piece to give')),
+    send_list(Dialog,append,[
+            new(N1,text_item())
+              ])

@@ -52,13 +52,13 @@ piece(16,[black,long,square,flat]).
 *              GAME PLAY              *
 **************************************/
 how_to_play :-
-	write('just type "play" to run the game').
+	write('just type \'play\' to run the game').
 
 debugHere :- 
 	nl,
-	write("DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG"),nl,
-	write("DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG"),nl,
-	write("DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG"),nl.
+	write('DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG'),nl,
+	write('DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG'),nl,
+	write('DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG'),nl.
 
 
 
@@ -84,13 +84,13 @@ round(inline,_,Board,NumPlayer) :-
 
 round(inline,HeuristicsTab,Board,NumPlayer) :-
 	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
-	nl,write("PLAYER "),write(NumPlayer),nl,
+	nl,write('PLAYER '),write(NumPlayer),nl,
 	askPiece(Interface,Heuristics1,Board,PieceID),
 	
 	swapPlayer(NumPlayer,NewNumPlayer),
 
 	draw_board(Interface,Board),
-	nl,write("PLAYER "),write(NewNumPlayer),nl,
+	nl,write('PLAYER '),write(NewNumPlayer),nl,
 
 	getHeuristics(HeuristicsTab,NewNumPlayer,Heuristics2),
 	readPosition(Interface,Heuristics2,Board,PieceID,Row,Column),

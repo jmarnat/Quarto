@@ -1,9 +1,9 @@
 askPiece_random(inline,Board,PieceID) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	random_member(PieceID,ListOfAvailablePieces),
-	write("I chose the piece n°"),
+	write('I chose the piece n°'),
 	write(PieceID),
-	write(" : "),
+	write(' : '),
 	printPiece(PieceID),
 	nl.
 

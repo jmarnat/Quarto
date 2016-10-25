@@ -1,7 +1,7 @@
 space :- write(' ').
 
 draw_middle_line :-
-	write(+-----+-----+-----+-----+), nl.
+	write('+-----+-----+-----+-----+'), nl.
 
 draw_board(inline,[FirstRow|Tail]) :-
 	write('\e[033m'),
@@ -82,15 +82,15 @@ printPieceBis([FirstAttribute|Rest]) :-
 	printPieceBis(Rest).
 
 printGameOver(Winner,A,B,C) :-
-	write("\e[031m*************************************"),nl,
-	write("* GAME OVER * GAME OVER * GAME OVER *"),nl,
-	write("*************************************"),nl,
-	write("Player "),
+	write('\e[031m*************************************'),nl,
+	write('* GAME OVER * GAME OVER * GAME OVER *'),nl,
+	write('*************************************'),nl,
+	write('Player '),
 		write(Winner),
-		write(" aligned "),
+		write(' aligned '),
 		write(A),
-		write(" pieces on the "),
+		write(' pieces on the '),
 		write(C),
-		write("° "),
+		write('° '),
 		write(B),
-	write("\e[0m"),nl.
+	write('\e[0m'),nl.
