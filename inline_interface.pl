@@ -1,24 +1,33 @@
 space :- write(' ').
 
-draw_first_line :-
-	write(┏━━━━━┳━━━━━┳━━━━━┳━━━━━┓), nl.
+
+
 
 draw_middle_line :-
-	write(┣━━━━━╋━━━━━╋━━━━━╋━━━━━┫), nl.
+	write(+-----+-----+-----+-----+), nl.
 
+/*
+draw_first_line :-
+	write(┏━━━━━┳━━━━━┳━━━━━┳━━━━━┓), nl.
+draw_middle_line :-
+	write(┣━━━━━╋━━━━━╋━━━━━╋━━━━━┫), nl.
 draw_last_line :-
 	write(┗━━━━━┻━━━━━┻━━━━━┻━━━━━┛), nl.
+*/
 
 draw_board(inline,[FirstRow|Tail]) :-
-	draw_first_line,
+	%% draw_first_line,
+	draw_middle_line,
 	draw_pieces_a(FirstRow),
 	draw_pieces_b(FirstRow),
 	draw_pieces_bis(Tail).
 
 draw_pieces_bis([]) :-
-	draw_last_line.
+	draw_middle_line.
+	%% draw_last_line.
 
 draw_pieces_bis([Row|Tail]) :-
+	%% draw_middle_line,
 	draw_middle_line,
 	draw_pieces_a(Row),
 	draw_pieces_b(Row),
@@ -28,23 +37,23 @@ draw_pieces_a([FirstPiece|Rest]) :-
 	piece(FirstPiece,[P1,P2,_,_]),
 	attribute(_,P1,A1),
 	attribute(_,P2,A2),
-	write('┃ '),
+	write('| '),
 	write(A1), space,
 	write(A2), space,
 	draw_pieces_a(Rest).
 draw_pieces_a([]) :-
-	write('┃'),nl.
+	write('|'),nl.
 
 draw_pieces_b([FirstPiece|Rest]) :-
 	piece(FirstPiece,[_,_,P3,P4]),
 	attribute(_,P3,A3),
 	attribute(_,P4,A4),
-	write('┃ '),
+	write('| '),
 	write(A3), space,
 	write(A4), space,
 	draw_pieces_b(Rest).
 draw_pieces_b([]) :-
-	write('┃'),nl.
+	write('|'),nl.
 
 
 printAvailablePieces(Board) :-

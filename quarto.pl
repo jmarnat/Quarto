@@ -18,6 +18,8 @@ attribute(empty,nul,' ').
 interface(inline).
 interface(graphical).
 
+%% playerType
+
 /**************************************
 *        SOME INSTANTIATIONS...       *
 **************************************/
