@@ -8,8 +8,8 @@
 
 ## TODO :
 * Interfaces :
-	[X] inline
-	[ ] GUI
+- [X] inline
+- [ ] GUI
 * Heuristics :
 	[X] human
 	[X] random
@@ -17,4 +17,3 @@
 	[ ] ??? (Clément)
 	[ ] &Alpha;&Beta; (Jérémie)
 	[ ] minimax (Josselin)
-oijkjkj
