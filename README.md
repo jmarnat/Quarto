@@ -8,12 +8,12 @@
 
 ## TODO :
 * Interfaces :
-- [X] inline
-- [ ] GUI
+	- [X] inline
+	- [ ] GUI
 * Heuristics :
-	[X] human
-	[X] random
-	[ ] strategy (Anthony)
-	[ ] ??? (Clément)
-	[ ] &Alpha;&Beta; (Jérémie)
-	[ ] minimax (Josselin)
+	* [X] human
+	* [X] random
+	* [ ] strategy (Anthony)
+	* [ ] ??? (Clément)
+	* [ ] &Alpha;&Beta; (Jérémie)
+	* [ ] minimax (Josselin)
