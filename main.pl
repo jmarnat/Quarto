@@ -1,11 +1,3 @@
-:- consult('quarto.pl').
-:- consult('inline_interface.pl').
-:- consult('heuristics.pl').
-
-
-:- write("FILES LOADED !"),nl,nl.
-:- write('\e[035mtype : "play(inline,human,random)" to begin\e[0m'),nl,nl.
-
 /*
 - add your consults above
 - write this two functions :
@@ -13,3 +5,17 @@
 	readPosition(inline,<yourheuristics>,Board,PieceID,Row,Column)
 
 */
+
+
+
+/* CONSULTING BASE FILES */
+:- consult('quarto.pl').
+:- consult('inline_interface.pl').
+:- consult('heuristics.pl').
+
+/* CONSULTING HEURISTICS FILES */
+:- consult('heuristics/human.pl').
+:- consult('heuristics/random.pl').
+
+:- write("FILES LOADED !"),nl,nl.
+:- write('\e[035mtype : "play(inline,human,random)" to begin\e[0m'),nl,nl.
