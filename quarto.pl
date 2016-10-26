@@ -68,7 +68,7 @@ debugHere :-
 *************************/
 
 play(Interface,Heuristics1,Heuristics2) :-
-	round(Interface,[Heuristics1,Heuristics2],[[0,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
+	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
 	%% round([[0,2,3,4],[5,0,7,0],[0,0,0,12],[13,0,15,0]],1).
 	%% round([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],1).
 
@@ -76,16 +76,16 @@ play(Interface,Heuristics1,Heuristics2) :-
 getHeuristics([Heuristics1,_],1,Heuristics1).
 getHeuristics([_,Heuristics2],2,Heuristics2).
 
-round(inline,_,Board,NumPlayer) :-
+round(inline,_,Board,NumPlayer,_) :-
 	%% debugHere,
 	check_win(Board,A,B,C),
 	swapPlayer(NumPlayer,Winner),
 	printGameOver(Winner,A,B,C).
 
-round(inline,HeuristicsTab,Board,NumPlayer) :-
+round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
 	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
 	nl,write('PLAYER '),write(NumPlayer),nl,
-	askPiece(Interface,Heuristics1,Board,PieceID),
+	askPiece(Interface,Heuristics1,Board,PieceID,LastPieceID),
 	
 	swapPlayer(NumPlayer,NewNumPlayer),
 
@@ -98,7 +98,7 @@ round(inline,HeuristicsTab,Board,NumPlayer) :-
 	draw_board(Interface,NewBoard),
 
 	%% check end
-	round(inline,HeuristicsTab,NewBoard,NewNumPlayer).
+	round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
 
 
 
