@@ -1,7 +1,6 @@
 /*
 TODO :
-- check win
-- askpiece bug
+- check win 
 */
 
 
@@ -84,6 +83,7 @@ test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
 
 
 play(Interface,Heuristics1,Heuristics2) :-
+	clear,
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
 	%% round(Interface,[Heuristics1,Heuristics2],[[0,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
 	%% round([[0,2,3,4],[5,0,7,0],[0,0,0,12],[13,0,15,0]],1).
@@ -100,19 +100,23 @@ round(inline,_,Board,NumPlayer) :-
 	printGameOver(Winner,A,B,C).
 
 round(inline,HeuristicsTab,Board,NumPlayer) :-
+	wipe,
+	draw_board(inline,Board),
 	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
 	nl,write('PLAYER '),write(NumPlayer),nl,
-	askPiece(Interface,Heuristics1,Board,PieceID),
+	askPiece(inline,Heuristics1,Board,PieceID),
 	
 	swapPlayer(NumPlayer,NewNumPlayer),
 
-	draw_board(Interface,Board),
+	wipe,
+	draw_board(inline,Board),
 	nl,write('PLAYER '),write(NewNumPlayer),nl,
 
 	getHeuristics(HeuristicsTab,NewNumPlayer,Heuristics2),
-	readPosition(Interface,Heuristics2,Board,PieceID,Row,Column),
+	write('Piece to play : '),printPiece(PieceID),nl,
+	readPosition(inline,Heuristics2,Board,PieceID,Row,Column),
 	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
-	draw_board(Interface,NewBoard),
+	%% draw_board(inline,NewBoard),
 
 	round(inline,HeuristicsTab,NewBoard,NewNumPlayer).
 

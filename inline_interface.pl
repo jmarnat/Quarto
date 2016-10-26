@@ -1,5 +1,8 @@
 space :- write(' ').
 
+clear :- write('\033[2J').
+wipe :- clear, write('\033[0;0H').
+
 draw_middle_line :-
 	write('+-----+-----+-----+-----+'), nl.
 
