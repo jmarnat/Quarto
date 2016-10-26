@@ -63,12 +63,33 @@ debugHere :-
 
 
 
+
+
+
+
+
+
+
+
 /*************************
 * GAME PLAY BASIC ROUNDS *
 *************************/
 
+test_play(_,_,_,0).
+test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
+	%% write("--------- rest "),write(NumTime),write(" -----------------\n"),
+	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1),
+	test_play(Interface,Heuristics1,Heuristics2,NumTime2),
+	NumTime is (NumTime2 + 1).
+
+
 play(Interface,Heuristics1,Heuristics2) :-
+<<<<<<< HEAD
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
+=======
+	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
+	%% round(Interface,[Heuristics1,Heuristics2],[[0,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
+>>>>>>> refs/remotes/origin/master
 	%% round([[0,2,3,4],[5,0,7,0],[0,0,0,12],[13,0,15,0]],1).
 	%% round([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],1).
 
@@ -97,8 +118,25 @@ round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
 	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
 	draw_board(Interface,NewBoard),
 
+<<<<<<< HEAD
 	%% check end
 	round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
+=======
+	round(inline,HeuristicsTab,NewBoard,NewNumPlayer).
+>>>>>>> refs/remotes/origin/master
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -200,10 +238,11 @@ win_list([H|T],Attribute) :-
 
 
 %% checking columns :
-check_columns([[A|_],[B|_],[C|_],[D|_]],Attribute) :-
+check_columns([[A|_],[B|_],[C|_],[D|_]],Attribute,1) :-
 	win_list([A,B,C,D],Attribute).
-check_columns([[_|T1],[_|T2],[_|T3],[_|T4]],Attribute) :-
-	check_columns([T1,T2,T3,T4],Attribute).
+check_columns([[_|T1],[_|T2],[_|T3],[_|T4]],Attribute,Num) :-
+	check_columns([T1,T2,T3,T4],Attribute,Num2),
+	Num is (Num2 + 1).
 
 %% checking rows :
 check_rows([Row|_],Attribute,1) :-
@@ -222,6 +261,6 @@ check_second_diagonal([[_,_,_,A],[_,_,B|_],[_,C|_],[D|_]],Attribute) :-
 
 %% then checking all :
 check_win(Board,Attribute,row,Num) :- check_rows(Board,Attribute,Num).
-check_win(Board,Attribute,column,_) :- check_columns(Board,Attribute).
+check_win(Board,Attribute,column,Num) :- check_columns(Board,Attribute,Num).
 check_win(Board,Attribute,diagonal,1) :- check_first_diagonal(Board,Attribute).
 check_win(Board,Attribute,diagonal,2) :- check_second_diagonal(Board,Attribute).

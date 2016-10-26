@@ -81,6 +81,13 @@ printPieceBis([FirstAttribute|Rest]) :-
 	write(Value),
 	printPieceBis(Rest).
 
+
+numbering(1,"1st").
+numbering(2,"2nd").
+numbering(3,"3rd").
+numbering(4,"4th").
+
+
 printGameOver(Winner,A,B,C) :-
 	write('\e[031m*************************************'),nl,
 	write('* GAME OVER * GAME OVER * GAME OVER *'),nl,
@@ -90,7 +97,8 @@ printGameOver(Winner,A,B,C) :-
 		write(' aligned '),
 		write(A),
 		write(' pieces on the '),
-		write(C),
-		write('° '),
+		numbering(C,C2),
+		write(C2),
+		space,
 		write(B),
 	write('\e[0m'),nl.
