@@ -7,6 +7,7 @@ The goal is to align 4 pieces with the same characteristics :
 * height (short|long)
 * geometry (round|square)
 * hole (hole|flat)
+
 The game follow this order :
 1. You choose a piece to give to your adversary;
 2. He put it on the board;
