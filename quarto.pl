@@ -102,7 +102,7 @@ round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
 	draw_board(inline,Board),
 	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
 	nl,write('PLAYER '),write(NumPlayer),nl,
-	askPiece(Interface,Heuristics1,Board,PieceID,LastPieceID),
+	askPiece(inline,Heuristics1,Board,PieceID,LastPieceID),
 
 	swapPlayer(NumPlayer,NewNumPlayer),
 
@@ -113,10 +113,9 @@ round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
 	getHeuristics(HeuristicsTab,NewNumPlayer,Heuristics2),
 	write('Piece to play : '),printPiece(PieceID),nl,
 	readPosition(inline,Heuristics2,Board,PieceID,Row,Column),
-	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard).
+	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
+	round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
 	%% draw_board(inline,NewBoard),
-
-%% round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
 	%% round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
 
 
