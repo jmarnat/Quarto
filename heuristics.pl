@@ -1,9 +1,6 @@
 library(random).
 
 
-/*heuristics(human,"Human"),
-heuristics(human,"Human"),*/
-
 
 getHeuristics([Heuristics1,_],1,Heuristics1).
 getHeuristics([_,Heuristics2],2,Heuristics2).

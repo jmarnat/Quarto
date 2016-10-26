@@ -5,6 +5,12 @@ TODO :
 */
 
 
+
+/**************************************
+*        SOME INSTANTIATIONS...       *
+**************************************/
+
+
 attribute(color,white,0).
 attribute(color,black,1).
 attribute(height,short,0).
@@ -22,10 +28,6 @@ player(human).
 player(random).
 
 %% playerType
-
-/**************************************
-*        SOME INSTANTIATIONS...       *
-**************************************/
 
 piece(0,[nul,nul,nul,nul]).
 piece(1,[white,short,round,hole]).
@@ -77,7 +79,7 @@ debugHere :-
 
 test_play(_,_,_,0).
 test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
-	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1),
+	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0),
 	test_play(Interface,Heuristics1,Heuristics2,NumTime2),
 	NumTime is (NumTime2 + 1).
 
