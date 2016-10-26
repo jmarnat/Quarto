@@ -95,6 +95,7 @@ printGameOver(Winner,A,B,C) :-
 	write('\e[031m*************************************'),nl,
 	write('* GAME OVER * GAME OVER * GAME OVER *'),nl,
 	write('*************************************'),nl,
+	%% draw_board(inline,Board)
 	write('Player '),
 		write(Winner),
 		write(' aligned '),
@@ -105,3 +106,11 @@ printGameOver(Winner,A,B,C) :-
 		space,
 		write(B),
 	write('\e[0m'),nl.
+
+printPlayer(Num,Heuristics) :-
+	%% Heuristics =.. HeuristicsName
+	write('[PLAYER '),
+	write(Num),
+	write(' - '),
+	write(Heuristics),
+	write(']\n\n').

@@ -77,7 +77,6 @@ debugHere :-
 
 test_play(_,_,_,0).
 test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
-	%% write("--------- rest "),write(NumTime),write(" -----------------\n"),
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1),
 	test_play(Interface,Heuristics1,Heuristics2,NumTime2),
 	NumTime is (NumTime2 + 1).
@@ -88,43 +87,39 @@ play(Interface,Heuristics1,Heuristics2) :-
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
 
 
-getHeuristics([Heuristics1,_],1,Heuristics1).
-getHeuristics([_,Heuristics2],2,Heuristics2).
+
+
+
+
+
+
 
 round(inline,_,Board,NumPlayer,_) :-
 	%% debugHere,
 	check_win(Board,A,B,C),
 	swapPlayer(NumPlayer,Winner),
-	printGameOver(Winner,A,B,C).
+	wipe,
+	printGameOver(Winner,A,B,C),
+	draw_board(inline,Board).
 
 
-round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
+round(inline,HeuristicsTab,Board,NumPlayer1,LastPieceID) :-
 	wipe,
 	draw_board(inline,Board),
-	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
-	nl,write('PLAYER '),write(NumPlayer),nl,
+	getHeuristics(HeuristicsTab,NumPlayer1,Heuristics1),
+	printPlayer(NumPlayer1,Heuristics1),
 	askPiece(inline,Heuristics1,Board,PieceID,LastPieceID),
 
-	swapPlayer(NumPlayer,NewNumPlayer),
+	swapPlayer(NumPlayer1,NumPlayer2),
 
 	wipe,
 	draw_board(inline,Board),
-	nl,write('PLAYER '),write(NewNumPlayer),nl,
+	getHeuristics(HeuristicsTab,NumPlayer2,Heuristics2),
+	printPlayer(NumPlayer2,Heuristics2),
 
-	getHeuristics(HeuristicsTab,NewNumPlayer,Heuristics2),
-	write('Piece to play : '),printPiece(PieceID),nl,
 	readPosition(inline,Heuristics2,Board,PieceID,Row,Column),
 	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
-	round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
-	%% draw_board(inline,NewBoard),
-	%% round(inline,HeuristicsTab,NewBoard,NewNumPlayer,PieceID).
-
-
-
-
-
-
-
+	round(inline,HeuristicsTab,NewBoard,NumPlayer2,PieceID).
 
 
 

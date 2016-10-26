@@ -1,6 +1,16 @@
 library(random).
 
 
+/*heuristics(human,"Human"),
+heuristics(human,"Human"),*/
+
+
+getHeuristics([Heuristics1,_],1,Heuristics1).
+getHeuristics([_,Heuristics2],2,Heuristics2).
+
+
+
+
 askPiece(inline,human,Board,PieceID,_) :-
 	askPiece_human(inline,Board,PieceID).
 
@@ -14,6 +24,7 @@ askPiece(inline,ai_antho,Board,PieceID,LastPieceId) :-
 
 
 readPosition(inline,human,Board,PieceID,Row,Col) :-
+	write('Piece to play : '),printPiece(PieceID),nl,
 	readPosition_human(inline,Board,PieceID,Row,Col).
 
 readPosition(inline,random,Board,PieceID,Row,Col) :-
