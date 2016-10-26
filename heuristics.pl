@@ -1,11 +1,11 @@
 library(random).
 
 
-askPiece(inline,human,Board,PieceID,LastPieceId) :-
-	askPiece_human(inline,Board,PieceID,LastPieceId).
+askPiece(inline,human,Board,PieceID,_) :-
+	askPiece_human(inline,Board,PieceID).
 
-askPiece(inline,random,Board,PieceID,LastPieceId) :-
-	askPiece_random(inline,Board,PieceID,LastPieceId).
+askPiece(inline,random,Board,PieceID,_) :-
+	askPiece_random(inline,Board,PieceID).
 
 askPiece(inline,ai_antho,Board,PieceID,LastPieceId) :-
 	askPiece_ai_antho(inline,Board,PieceID,LastPieceId).
