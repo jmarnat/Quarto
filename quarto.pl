@@ -84,23 +84,8 @@ test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
 
 
 play(Interface,Heuristics1,Heuristics2) :-
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
-=======
-=======
-	clear,
->>>>>>> refs/remotes/origin/master
-	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
-	%% round(Interface,[Heuristics1,Heuristics2],[[0,2,3,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1).
->>>>>>> refs/remotes/origin/master
-	%% round([[0,2,3,4],[5,0,7,0],[0,0,0,12],[13,0,15,0]],1).
-	%% round([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],1).
-=======
 	clear,
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
->>>>>>> refs/remotes/origin/master
 
 
 getHeuristics([Heuristics1,_],1,Heuristics1).
@@ -112,30 +97,14 @@ round(inline,_,Board,NumPlayer,_) :-
 	swapPlayer(NumPlayer,Winner),
 	printGameOver(Winner,A,B,C).
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
-	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
-	nl,write('PLAYER '),write(NumPlayer),nl,
-	askPiece(Interface,Heuristics1,Board,PieceID,LastPieceID),
-=======
-round(inline,HeuristicsTab,Board,NumPlayer) :-
-=======
 
 round(inline,HeuristicsTab,Board,NumPlayer,LastPieceID) :-
->>>>>>> refs/remotes/origin/master
 	wipe,
 	draw_board(inline,Board),
 	getHeuristics(HeuristicsTab,NumPlayer,Heuristics1),
 	nl,write('PLAYER '),write(NumPlayer),nl,
-<<<<<<< HEAD
-	askPiece(inline,Heuristics1,Board,PieceID),
->>>>>>> refs/remotes/origin/master
-	
-=======
 	askPiece(inline,Heuristics1,Board,PieceID,LastPieceID),
 
->>>>>>> refs/remotes/origin/master
 	swapPlayer(NumPlayer,NewNumPlayer),
 
 	wipe,
