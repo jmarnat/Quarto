@@ -1,7 +1,8 @@
 # Quarto
 
 
-## HOW TO PLAY :
+
+## How to play :
 The goal is to align 4 pieces with the same characteristics :
 * color (white|black)
 * height (short|long)
@@ -13,21 +14,22 @@ The game follow this order :
 2. He put it on the board;
 3. He gives you a piece, and so on...
 
-## RUNNING :
+## Run :
 1. Run prolog using swipl or whatever,
 2. Just load the main file by typing `consult('main.pl')`.
 3. Then play by typing `play(inline,Heuristics1,Heuristics2)`, with Heuristics beeing :
   * human
   * random
 
-## TODO :
+
+## To-do list :
 * Interfaces :
-	- [X] inline
+	- [x] inline
 	- [ ] GUI
 * Heuristics :
-	* [X] human
-	* [X] random
+	* [x] human
+	* [x] random
 	* [ ] strategy (Anthony)
 	* [ ] ??? (Clément)
-	* [ ] &Alpha;&Beta; (Jérémie)
+	* [ ] &alpha;&beta; (Jérémie)
 	* [ ] minimax (Josselin)
