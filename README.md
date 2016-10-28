@@ -1,7 +1,6 @@
 # Quarto
 
 
-
 ## How to play :
 The goal is to align 4 pieces with the same characteristics :
 * color (white|black)
