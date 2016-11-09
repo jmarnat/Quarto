@@ -1,3 +1,5 @@
+%% This AI is base on a strategy made by Anthony
+
 invertAttribute(white,black).
 invertAttribute(black,white).
 invertAttribute(short,long).
@@ -6,8 +8,6 @@ invertAttribute(round,square).
 invertAttribute(square,round).
 invertAttribute(hole,flat).
 invertAttribute(flat,hole).
-try(N):-
-	countPieces(N,[[0,2,3,4],[5,0,7,0],[0,0,0,12],[13,0,15,0]]).		
 
 
 countPieces(16,[]):-!.
@@ -63,37 +63,32 @@ share2(PieceID,[P1,P2,P3,P4,P5,P6]):-
 	piece(P6,[IVColor,IVHeight,Geometry,Hole]).
 
 getLoosesPieces(Board,ListOfPieces) :-
-	getLoosesPiecesBis(Board,ListOfPieces,1).
+	getAvailablePieces(Board,AvailablePieces),
+	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
 
-getLoosesPiecesBis(_,[],17).
-getLoosesPiecesBis(Board,[PieceID|ListOfPieces],PieceID) :-
-	PieceID < 17,
-	NewPieceID is (PieceID + 1),
-	isLooses(Board,PieceID),
-	getLoosesPiecesBis(Board,ListOfPieces,NewPieceID).
-getLoosesPiecesBis(Board,ListOfPieces,PieceID) :-
-	PieceID < 17,
-	NewPieceID is (PieceID + 1),
-	getLoosesPiecesBis(Board,ListOfPieces,NewPieceID).
-isLooses(Board,PieceID):-
-	piece(TestPieceID,_),
-	putPieceOnBoard(TestPieceID,_,_,Board,NewBoard),
-	check_win(NewBoard,_,_,_),
-	PieceID is TestPieceID.
+getLoosesPiecesBis(_,[],[]).
+getLoosesPiecesBis(Board,[PieceID|ListOfPieces],[PieceID|AvailablePieces]) :-
+	checkWinPosition(Board,PieceID,_,_),
+	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
+getLoosesPiecesBis(Board,ListOfPieces,[_|AvailablePieces]) :-
+	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
+checkWinPosition(Board,PieceID,Row,Col):-
+	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
+	check_win(NewBoard,_,_,_).
 
-
+/*Choosing Piece To give */
 askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
 	printAvailablePieces(Board),
 	countPieces(N,Board),
+	getAvailablePieces(Board,PossiblePieces),
 	getLoosesPieces(Board,LoosePieces),
-	getAvailablePieces(Board,AvailablePieces),
-
-	write(loosePieces),write(LoosePieces),nl,
-	givePiece(N,MyPieceID,PieceID,AvailablePieces,LoosePieces),
+	subtract(PossiblePieces,LoosePieces,PiecesList),
+	write('AvailablePieces:'),write(PossiblePieces),nl,
+	write('loosePieces:'),write(LoosePieces),nl,
+	write('subtract:'),write(PiecesList),nl,
+	givePiece(N,MyPieceID,PieceID,PiecesList,LoosePieces),
 	write('I choose :'),write(PieceID),nl,nl,printPiece(PieceID),nl,nl.
 
-readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
-	choosePosition(Board,PieceID,Row,Col).
 givePiece(0,_,PieceID,AvailablePieces,_):-
 	findPiece(0,_,PieceID,AvailablePieces)
 .
@@ -106,34 +101,103 @@ givePiece(N,MyPieceID,PieceID,AvailablePieces,_):-
 message(0).
 message(_):-write('Probably Loose').
 checkPiece(PieceID,AvailablePieces,LoosePieces):-
-	member(PieceID,AvailablePieces),
-	\+member(PieceID,LoosePieces).
+	memberchk(PieceID,AvailablePieces),
+	\+memberchk(PieceID,LoosePieces).
 
-findPiece(_,_,RandomPiece,AvailablePieces):-
-	random_member(RandomPiece,AvailablePieces).
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	invertPiece(MyPieceID,PieceID).
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	share1(MyPieceID,PiecesList),
-	member(PieceID,PiecesList),
-	write(PiecesList),nl.
+	memberchk(PieceID,PiecesList).
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
-	write(' Share 3 : '),nl,
 	share3(MyPieceID,PiecesList),
-	member(PieceID,PiecesList),
-	write(PiecesList),nl.
+	write(' Share 3 : '),write(PiecesList),nl,
+	memberchk(PieceID,PiecesList).
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
-	write(' Share  2 : '),nl,
 	share2(MyPieceID,PiecesList),
-	member(PieceID,PiecesList),
-	write(PiecesList),nl.
+	write(' Share  2 : '),write(PiecesList),nl,
+	memberchk(PieceID,PiecesList).
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
-	write(' Share 1 : '),nl,
 	share1(MyPieceID,PiecesList),
-	member(PieceID,PiecesList),
-	write(PiecesList),nl.
+	write(' Share 1 : '),write(PiecesList),nl,
+	memberchk(PieceID,PiecesList).
+findPiece(_,_,RandomPiece,AvailablePieces):-
+	random_member(RandomPiece,AvailablePieces).
+
+	/* Choosing better Place For my Piece */
+
+
+readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
+	choosePosition(Board,PieceID,Row,Col).
+readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
+	readPosition_random(inline,Board,PieceID,Row,Col).
+
+%% Searching for a wining position
+choosePosition(Board,PieceID,Row,Col):-
+	checkWinPosition(Board,PieceID,Row,Col).
+
+choosePosition(Board,PieceID,Row,Col):-
+	countPieces(N,Board),
+	findPosition(N,Board,PieceID,Row,Col).
+
+
+/*trouvez une position sans aligenement 0-5*/
+findPosition(N,Board,PieceID,Row,Col):-
+	N<5,N>0,
+	optimalPos(0,Board,PieceID,Row,Col)
+.
+
+
+findPosition(N,Board,PieceID,Row,Col):-
+	N>5,
+	optimalPos(2,Board,PieceID,Row,Col)
+.
+findPosition(N,Board,PieceID,Row,Col):-
+	N>5,
+	optimalPos(2,1,Board,PieceID,Row,Col)
+.
+findPosition(N,Board,PieceID,Row,Col):-
+	N>5,
+	optimalPos(1,2,Board,PieceID,Row,Col)
+.
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(N,N,Board,PieceID,Row,Col).
+optimalPos(N1,N2,Board,PieceID,Row,Col):-
+	piece(PieceID,Attributes),
+	memberchk(FAttribute,Attributes),
+	selectListPiece(Row,Board,SelectedRow),
+	searchNAttribute(N1,SelectedRow,FAttribute),
+	memberchk(SAttribute,Attributes),
+	boardRowToCol(Board,ColBoard),
+	selectListPiece(Col,ColBoard,SelectedCol),
+	searchNAttribute(N2,SelectedCol,SAttribute).
+
+searchNAttribute(N,[],_):-
+	N is 0.
+searchNAttribute(N,[0|RestOfPieces],Attribute):-
+	searchNAttribute(N,RestOfPieces,Attribute).
+searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
+	searchAttribute(PieceID,Attribute),
+	searchNAttribute(Nr,RestOfPieces,Attribute),
+	N is Nr+1.
+
+searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
+	searchNAttribute(N,RestOfPieces,Attribute).
+searchAttribute(PieceID,Attribute):-
+	piece(PieceID,Attributes),
+	memberchk(Attribute,Attributes).
+
+selectListPiece(0,[X|_],X).
+selectListPiece(1,[_|[X|_]],X).
+selectListPiece(2,[_,_,X,_],X).
+selectListPiece(3,[_,_,_,X],X).
+
+boardDiagonal([[W1,X1,Y1,Z1],[W2,X2,Y2,Z2],[W3,X3,Y3,Z3],[W4,X4,Y4,Z4]],[W1,X2,Y3,Z4],[W4,X3,Y2,Z1]).
+
+boardRowToCol([[W1,X1,Y1,Z1],[W2,X2,Y2,Z2],[W3,X3,Y3,Z3],[W4,X4,Y4,Z4]],[[W1,W2,W3,W4],[X1,X2,X3,X4],[Y1,Y2,Y3,Y4],[Z1,Z2,Z3,Z4]]).
