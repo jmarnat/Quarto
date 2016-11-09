@@ -85,10 +85,10 @@ printPieceBis([FirstAttribute|Rest]) :-
 	printPieceBis(Rest).
 
 
-numbering(1,"1st").
-numbering(2,"2nd").
-numbering(3,"3rd").
-numbering(4,"4th").
+numbering(1,'1st').
+numbering(2,'2nd').
+numbering(3,'3rd').
+numbering(4,'4th').
 
 
 printGameOver(Winner,A,B,C) :-

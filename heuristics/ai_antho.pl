@@ -80,8 +80,8 @@ checkWinPosition(Board,PieceID,Row,Col):-
 askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
 	printAvailablePieces(Board),
 	countPieces(N,Board),
-	getAvailablePieces(Board,PossiblePieces),
 	getLoosesPieces(Board,LoosePieces),
+	getAvailablePieces(Board,PossiblePieces),
 	subtract(PossiblePieces,LoosePieces,PiecesList),
 	write('AvailablePieces:'),write(PossiblePieces),nl,
 	write('loosePieces:'),write(LoosePieces),nl,
@@ -133,7 +133,10 @@ findPiece(_,_,RandomPiece,AvailablePieces):-
 
 
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
-	choosePosition(Board,PieceID,Row,Col).
+	choosePosition(Board,PieceID,Row,Col),
+	isEmpty(Board,Row,Col)
+	%% ,\+looseGive(Board,PieceID,Row,Col)
+	.
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 	readPosition_random(inline,Board,PieceID,Row,Col).
 
