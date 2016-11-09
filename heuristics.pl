@@ -28,4 +28,4 @@ readPosition(inline,random,Board,PieceID,Row,Col) :-
 	readPosition_random(inline,Board,PieceID,Row,Col).
 
 readPosition(inline,ai_antho,Board,PieceID,Row,Col) :-
-	readPosition_human(inline,Board,PieceID,Row,Col).
+	readPosition_ai_antho(inline,Board,PieceID,Row,Col).
