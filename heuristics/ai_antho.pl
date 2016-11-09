@@ -187,7 +187,7 @@ searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
 	searchNAttribute(Nr,RestOfPieces,Attribute),
 	N is Nr+1.
 
-searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
+searchNAttribute(N,[_|RestOfPieces],Attribute):-
 	searchNAttribute(N,RestOfPieces,Attribute).
 searchAttribute(PieceID,Attribute):-
 	piece(PieceID,Attributes),
@@ -198,6 +198,6 @@ selectListPiece(1,[_|[X|_]],X).
 selectListPiece(2,[_,_,X,_],X).
 selectListPiece(3,[_,_,_,X],X).
 
-boardDiagonal([[W1,X1,Y1,Z1],[W2,X2,Y2,Z2],[W3,X3,Y3,Z3],[W4,X4,Y4,Z4]],[W1,X2,Y3,Z4],[W4,X3,Y2,Z1]).
+boardDiagonal([[W1,_,_,Z1],[_,X2,Y2,_],[_,X3,Y3,_],[W4,_,_,Z4]],[W1,X2,Y3,Z4],[W4,X3,Y2,Z1]).
 
 boardRowToCol([[W1,X1,Y1,Z1],[W2,X2,Y2,Z2],[W3,X3,Y3,Z3],[W4,X4,Y4,Z4]],[[W1,W2,W3,W4],[X1,X2,X3,X4],[Y1,Y2,Y3,Y4],[Z1,Z2,Z3,Z4]]).
