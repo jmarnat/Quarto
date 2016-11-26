@@ -99,9 +99,9 @@ play(Interface,Heuristics1,Heuristics2) :-
 round(inline,_,Board,NumPlayer,_) :-
 	%% debugHere,
 	check_win(Board,A,B,C),
-	swapPlayer(NumPlayer,Winner),
+	%% swapPlayer(NumPlayer,Winner),
 	wipe,
-	printGameOver(Winner,A,B,C),
+	printGameOver(NumPlayer,A,B,C),
 	draw_board(inline,Board).
 
 

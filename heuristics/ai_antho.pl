@@ -135,7 +135,7 @@ findPiece(_,_,RandomPiece,AvailablePieces):-
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 	choosePosition(Board,PieceID,Row,Col),
 	isEmpty(Board,Row,Col)
-	%% ,\+looseGive(Board,PieceID,Row,Col)
+	%% ,\+looseMove(Board,PieceID,Row,Col)
 	.
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 	readPosition_random(inline,Board,PieceID,Row,Col).
@@ -150,11 +150,10 @@ choosePosition(Board,PieceID,Row,Col):-
 
 
 /*trouvez une position sans aligenement 0-5*/
-findPosition(N,Board,PieceID,Row,Col):-
+findPosition(N,Board,_,Row,Col):-
 	N<5,N>0,
-	optimalPos(0,Board,PieceID,Row,Col)
+	optimalPos(4,Board,0,Row,Col)
 .
-
 
 findPosition(N,Board,PieceID,Row,Col):-
 	N>5,
@@ -173,22 +172,32 @@ optimalPos(N,Board,PieceID,Row,Col):-
 	optimalPos(N,N,Board,PieceID,Row,Col).
 optimalPos(N1,N2,Board,PieceID,Row,Col):-
 	piece(PieceID,Attributes),
-	memberchk(FAttribute,Attributes),
+	memberchk(RAttribute,Attributes),
+	random_member(Row,[4,3,2,1,4,2,1,1,3,2,3,4]),
 	selectListPiece(Row,Board,SelectedRow),
-	searchNAttribute(N1,SelectedRow,FAttribute),
-	memberchk(SAttribute,Attributes),
+	searchNAttribute(N1,SelectedRow,RAttribute),
+	memberchk(CAttribute,Attributes),
 	boardRowToCol(Board,ColBoard),
+	random_member(Col,[3,1,4,2,2,3,4,1,1,3,4,2]),
 	selectListPiece(Col,ColBoard,SelectedCol),
-	searchNAttribute(N2,SelectedCol,SAttribute).
+	searchNAttribute(N2,SelectedCol,CAttribute),notrace,trace,
+	memberchk(DAttribute,Attributes),
+	boardDiagonal(Board,BoardDiagonal),
+	random_member(DiagPos,[3,1,4,2,2,3,4,1,1,3,4,2]),
+	selectListPiece(Diag,BoardDiagonal,SelectedDia),
+	searchNAttribute(N1,SelectedDia,DAttribute),
+	diagRowCol(Diag,DiagPos,Row,Col),notrace.
 
 searchNAttribute(N,[],_):-
 	N is 0.
-searchNAttribute(N,[0|RestOfPieces],Attribute):-
-	searchNAttribute(N,RestOfPieces,Attribute).
+searchNAttribute(N,[0|RestOfPieces],nul):-
+	searchNAttribute(Nr,RestOfPieces,nul),
+	N is Nr+1.
 searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
 	searchAttribute(PieceID,Attribute),
 	searchNAttribute(Nr,RestOfPieces,Attribute),
-	N is Nr+1.
+	N is Nr+1
+	.
 
 searchNAttribute(N,[_|RestOfPieces],Attribute):-
 	searchNAttribute(N,RestOfPieces,Attribute).
@@ -196,11 +205,13 @@ searchAttribute(PieceID,Attribute):-
 	piece(PieceID,Attributes),
 	memberchk(Attribute,Attributes).
 
-selectListPiece(0,[X|_],X).
-selectListPiece(1,[_|[X|_]],X).
-selectListPiece(2,[_,_,X,_],X).
-selectListPiece(3,[_,_,_,X],X).
-
-boardDiagonal([[W1,_,_,Z1],[_,X2,Y2,_],[_,X3,Y3,_],[W4,_,_,Z4]],[W1,X2,Y3,Z4],[W4,X3,Y2,Z1]).
+selectListPiece(1,[X|_],X).
+selectListPiece(2,[_|[X|_]],X).
+selectListPiece(3,[_,_,X,_],X).
+selectListPiece(4,[_,_,_,X],X).
+diagRowCol(1,DiagPos,DiagPos,DiagPos).
+diagRowCol(2,DiagPos,DiagPos,DiagPos2):-
+	DiagPos2 is 5-DiagPos.
+boardDiagonal([[W1,_,_,Z1],[_,X2,Y2,_],[_,X3,Y3,_],[W4,_,_,Z4]],[[W1,X2,Y3,Z4],[W4,X3,Y2,Z1]]).
 
 boardRowToCol([[W1,X1,Y1,Z1],[W2,X2,Y2,Z2],[W3,X3,Y3,Z3],[W4,X4,Y4,Z4]],[[W1,W2,W3,W4],[X1,X2,X3,X4],[Y1,Y2,Y3,Y4],[Z1,Z2,Z3,Z4]]).
