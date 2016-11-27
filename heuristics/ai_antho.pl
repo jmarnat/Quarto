@@ -9,6 +9,9 @@ invertAttribute(square,round).
 invertAttribute(hole,flat).
 invertAttribute(flat,hole).
 
+printRC(R,C):-write('['),write(R),write(','),write(C),write(']'),nl.
+printAPiece(PieceID):-
+write(PieceID),write(' ('),printPiece(PieceID),write(')'),nl.
 
 countPieces(16,[]):-!.
 countPieces(Nu,[H|T]):-
@@ -62,7 +65,12 @@ share2(PieceID,[P1,P2,P3,P4,P5,P6]):-
 	piece(P5,[IVColor,Height,IVGeometry,Hole]),
 	piece(P6,[IVColor,IVHeight,Geometry,Hole]).
 
-getLoosesPieces(Board,ListOfPieces) :-
+getNonLoosesPieces(Board,PiecesList):-
+	getLoosesPieces(Board,LoosePieces),
+	getAvailablePieces(Board,PossiblePieces),
+	subtract(PossiblePieces,LoosePieces,PiecesList),!
+.
+getLoosesPieces(Board,ListOfPieces):-
 	getAvailablePieces(Board,AvailablePieces),
 	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
 
@@ -73,33 +81,60 @@ getLoosesPiecesBis(Board,[PieceID|ListOfPieces],[PieceID|AvailablePieces]) :-
 getLoosesPiecesBis(Board,ListOfPieces,[_|AvailablePieces]) :-
 	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
 checkWinPosition(Board,PieceID,Row,Col):-
+	isEmpty(Board,Row,Col),
 	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
-	check_win(NewBoard,_,_,_).
+	check_win(NewBoard,_,_,_),!.
+
+printGameState(Board):-
+	getNonLoosesPieces(Board,NLP),
+	printRC('NonLoosesPieces',NLP),
+	getLoosesPieces(Board,LP),
+	printRC('LoosesPieces',LP),
+	getAvailablePieces(Board,AP),
+	printRC('AvailablePieces',AP)
+.
+
+
+
+
+
+
+
+
+
 
 /*Choosing Piece To give */
+choosePiece(_,N,MyPieceID,PieceID,PiecesList,LoosePieces):-
+	givePiece(N,MyPieceID,PieceID,PiecesList,LoosePieces)
+.
+choosePiece(Board,_,_,PieceID,_,_):-
+	getAvailablePieces(Board,AvailablePieces),
+	write('random choose:'), nl,
+	randomPiece(PieceID,AvailablePieces).
+
 askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
-	printAvailablePieces(Board),
 	countPieces(N,Board),
+	printAvailablePieces(Board),
 	getLoosesPieces(Board,LoosePieces),
+	write('LoosePieces:'),write(LoosePieces),nl,
 	getAvailablePieces(Board,PossiblePieces),
+	write('PossiblePieces:'),write(PossiblePieces),nl,
 	subtract(PossiblePieces,LoosePieces,PiecesList),
-	write('AvailablePieces:'),write(PossiblePieces),nl,
-	write('loosePieces:'),write(LoosePieces),nl,
-	write('subtract:'),write(PiecesList),nl,
-	givePiece(N,MyPieceID,PieceID,PiecesList,LoosePieces),
-	write('I choose :'),write(PieceID),nl,nl,printPiece(PieceID),nl,nl.
+	write('PiecesList:'),write(PiecesList),nl,
+	choosePiece(Board,N,MyPieceID,PieceID,PiecesList,LoosePieces),
+	write('I choose :'),printAPiece(PieceID).
 
 givePiece(0,_,PieceID,AvailablePieces,_):-
-	findPiece(0,_,PieceID,AvailablePieces)
+	randomPiece(PieceID,AvailablePieces)
 .
 givePiece(N,MyPieceID,PieceID,AvailablePieces,LoosePieces):-
 	findPiece(N,MyPieceID,PieceID),
 	checkPiece(PieceID,AvailablePieces,LoosePieces).
-givePiece(N,MyPieceID,PieceID,AvailablePieces,_):-
-	findPiece(N,MyPieceID,PieceID,AvailablePieces).
+givePiece(_,_,PieceID,AvailablePieces,LoosePieces):-
+	randomPiece(PieceID,AvailablePieces),
+	\+memberchk(PieceID,LoosePieces)
+.
 
-message(0).
-message(_):-write('Probably Loose').
 checkPiece(PieceID,AvailablePieces,LoosePieces):-
 	memberchk(PieceID,AvailablePieces),
 	\+memberchk(PieceID,LoosePieces).
@@ -112,82 +147,139 @@ findPiece(N,MyPieceID,PieceID):-
 	share1(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
 findPiece(N,MyPieceID,PieceID):-
+	N>0,N<5,
+	share2(MyPieceID,PiecesList),
+	memberchk(PieceID,PiecesList).
+findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share3(MyPieceID,PiecesList),
-	write(' Share 3 : '),write(PiecesList),nl,
+	%% write(' Share 3 : '),write(PiecesList),nl,
 	memberchk(PieceID,PiecesList).
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share2(MyPieceID,PiecesList),
-	write(' Share  2 : '),write(PiecesList),nl,
+	%% write(' Share 2 : '),write(PiecesList),nl,
 	memberchk(PieceID,PiecesList).
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share1(MyPieceID,PiecesList),
-	write(' Share 1 : '),write(PiecesList),nl,
+	%% write(' Share 1 : '),write(PiecesList),nl,
 	memberchk(PieceID,PiecesList).
-findPiece(_,_,RandomPiece,AvailablePieces):-
+randomPiece(RandomPiece,AvailablePieces):-
 	random_member(RandomPiece,AvailablePieces).
 
 	/* Choosing better Place For my Piece */
 
 
-readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
-	choosePosition(Board,PieceID,Row,Col),
-	isEmpty(Board,Row,Col)
-	%% ,\+looseMove(Board,PieceID,Row,Col)
-	.
-readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
-	readPosition_random(inline,Board,PieceID,Row,Col).
+
+
+
+
+
+
+
+
+
 
 %% Searching for a wining position
-choosePosition(Board,PieceID,Row,Col):-
+readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 	checkWinPosition(Board,PieceID,Row,Col).
 
+readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
+	choosePosition(Board,PieceID,Row,Col)
+	.
+
+
+goodMove(_,0,_,_).
+goodMove(Board,PieceID,Row,Col):-
+	isEmpty(Board,Row,Col),
+	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
+	getAvailablePieces(NewBoard,AP),
+	\+getLoosesPieces(NewBoard,AP)
+	.
+emptyList([]).
 choosePosition(Board,PieceID,Row,Col):-
+	printAPiece(PieceID),
 	countPieces(N,Board),
 	findPosition(N,Board,PieceID,Row,Col).
 
 
 /*trouvez une position sans aligenement 0-5*/
 findPosition(N,Board,_,Row,Col):-
-	N<5,N>0,
+	N<5,N>0,write('find X<5'),nl,
 	optimalPos(4,Board,0,Row,Col)
 .
 
 findPosition(N,Board,PieceID,Row,Col):-
 	N>5,
+	write('find Defense'),nl,
+	getLoosesPieces(Board,[]),
+	getNonLoosesPieces(Board,NLP),
+	NLP == [PieceID],
+	findDefensePosition(Board,PieceID,Row,Col)
+.
+findPosition(N,Board,PieceID,Row,Col):-
+	N>5,write('find 2'),nl,
 	optimalPos(2,Board,PieceID,Row,Col)
 .
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,
-	optimalPos(2,1,Board,PieceID,Row,Col)
+	N>5,write('find 1'),nl,
+	optimalPos(1,Board,PieceID,Row,Col)
 .
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,
-	optimalPos(1,2,Board,PieceID,Row,Col)
+	N>5,write('find 0'),nl,
+	optimalPos(0,Board,PieceID,Row,Col)
 .
+findPosition(_,Board,_,Row,Col):-
+	isEmpty(Board,Row,Col),
+	random_member(Row,[2,3,1,4]),
+	random_member(Col,[2,3,1,4])
+.
+findDefensePosition(Board,PieceID,Row,Col):-
+	write('try Defensive'),nl,
+	getLoosesPieces(Board,LoosePieces),
+	random_member(AvailablePiece,LoosePieces),
+	checkWinPosition(Board,AvailablePiece,Row,Col),
+	goodMove(Board,PieceID,Row,Col)
+.
+%% Defensive
 
 optimalPos(N,Board,PieceID,Row,Col):-
-	optimalPos(N,N,Board,PieceID,Row,Col).
-optimalPos(N1,N2,Board,PieceID,Row,Col):-
+	optimalPos(N,N,N,Board,PieceID,Row,Col).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(N,_,_,Board,PieceID,Row,Col).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(_,N,_,Board,PieceID,Row,Col).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(_,_,N,Board,PieceID,Row,Col).
+
+
+optimalPos(N1,N2,N3,Board,PieceID,Row,Col):-
 	piece(PieceID,Attributes),
 	memberchk(RAttribute,Attributes),
-	random_member(Row,[4,3,2,1,4,2,1,1,3,2,3,4]),
 	selectListPiece(Row,Board,SelectedRow),
 	searchNAttribute(N1,SelectedRow,RAttribute),
 	memberchk(CAttribute,Attributes),
 	boardRowToCol(Board,ColBoard),
-	random_member(Col,[3,1,4,2,2,3,4,1,1,3,4,2]),
 	selectListPiece(Col,ColBoard,SelectedCol),
-	searchNAttribute(N2,SelectedCol,CAttribute),notrace,trace,
+	searchNAttribute(N2,SelectedCol,CAttribute),
+
+	checkDiag(N3,Board,Row,Col,Attributes),
+	goodMove(Board,PieceID,Row,Col)
+	.
+checkDiag(N1,Board,Row,Col,Attributes):-
 	memberchk(DAttribute,Attributes),
 	boardDiagonal(Board,BoardDiagonal),
-	random_member(DiagPos,[3,1,4,2,2,3,4,1,1,3,4,2]),
+	random_member(DiagPos,[3,1,4,2]),
 	selectListPiece(Diag,BoardDiagonal,SelectedDia),
 	searchNAttribute(N1,SelectedDia,DAttribute),
-	diagRowCol(Diag,DiagPos,Row,Col),notrace.
-
+	diagRowCol(Diag,DiagPos,Row,Col)
+.
+checkDiag(_,_,Row,Col,_):-
+	\+diagRowCol(_,_,Row,Col).
 searchNAttribute(N,[],_):-
 	N is 0.
 searchNAttribute(N,[0|RestOfPieces],nul):-
