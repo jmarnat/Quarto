@@ -13,10 +13,5 @@
 :- consult('inline_interface.pl').
 :- consult('heuristics.pl').
 
-/* CONSULTING HEURISTICS FILES */
-:- consult('heuristics/human.pl').
-:- consult('heuristics/random.pl').
-:- consult('heuristics/ai_antho.pl').
-
 :- write('FILES LOADED !'),nl,nl.
 :- write('\e[035mtype : "play(inline,human,random)" to begin\e[0m'),nl,nl.
