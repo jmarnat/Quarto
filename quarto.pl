@@ -85,9 +85,13 @@ test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
 
 
 play(Interface,Heuristics1,Heuristics2) :-
+	heuristics(Heuristics1),
+	heuristics(Heuristics2),
 	clear,
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
 
+play(_,_,_) :-
+	write('\e[031mERROE: wrong heuristics name\e[0m').
 
 
 

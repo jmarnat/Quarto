@@ -5,6 +5,10 @@ library(random).
 getHeuristics([Heuristics1,_],1,Heuristics1).
 getHeuristics([_,Heuristics2],2,Heuristics2).
 
+heuristics(human).
+heuristics(ai_antho).
+heuristics(random).
+heuristics(clement).
 
 
 
