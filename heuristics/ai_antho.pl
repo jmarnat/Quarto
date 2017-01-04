@@ -233,7 +233,7 @@ findPosition(N,Board,PieceID,Row,Col):-
 findPosition(_,Board,_,Row,Col):-
 	isEmpty(Board,Row,Col),
 	random_member(Row,[2,3,1,4]),
-	random_member(Col,[2,3,1,4])
+	random_member(Col,[2,3,1,4]),!
 .
 findDefensePosition(Board,PieceID,Row,Col):-
 	write('try Defensive'),nl,
