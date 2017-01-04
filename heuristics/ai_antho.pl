@@ -9,7 +9,7 @@ invertAttribute(square,round).
 invertAttribute(hole,flat).
 invertAttribute(flat,hole).
 
-printRC(R,C):-write('['),write(R),write(','),write(C),write(']'),nl.
+
 printAPiece(PieceID):-
 write(PieceID),write(' ('),printPiece(PieceID),write(')'),nl.
 
@@ -25,6 +25,7 @@ countEmpty(NE,[_|T]):-
 	countEmpty(NE,T).
 countEmpty(0,[]).
 
+%% searching for the invert piece of the first
 invertPiece(PieceID,InvertID):-
 	piece(PieceID,[Color,Height,Geometry,Hole]),
 	invertAttribute(Color,IVColor),
@@ -32,6 +33,8 @@ invertPiece(PieceID,InvertID):-
 	invertAttribute(Geometry,IVGeometry),
 	invertAttribute(Hole,IVHole),
 	piece(InvertID,[IVColor,IVHeight,IVGeometry,IVHole]).
+
+%% search'N' predicate, searching for a list of pieces with sharing N Attributes
 share3(PieceID,[P1,P2,P3,P4]):-
 	piece(PieceID,[Color,Height,Geometry,Hole]),
 	invertAttribute(Color,IVColor),
@@ -65,11 +68,14 @@ share2(PieceID,[P1,P2,P3,P4,P5,P6]):-
 	piece(P5,[IVColor,Height,IVGeometry,Hole]),
 	piece(P6,[IVColor,IVHeight,Geometry,Hole]).
 
+
+%% get a list of pieces that are not loosing at the current state of the Board
 getNonLoosesPieces(Board,PiecesList):-
 	getLoosesPieces(Board,LoosePieces),
 	getAvailablePieces(Board,PossiblePieces),
 	subtract(PossiblePieces,LoosePieces,PiecesList),!
 .
+%% get list of loosing pieces at the Board state
 getLoosesPieces(Board,ListOfPieces):-
 	getAvailablePieces(Board,AvailablePieces),
 	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
@@ -80,11 +86,15 @@ getLoosesPiecesBis(Board,[PieceID|ListOfPieces],[PieceID|AvailablePieces]) :-
 	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
 getLoosesPiecesBis(Board,ListOfPieces,[_|AvailablePieces]) :-
 	getLoosesPiecesBis(Board,ListOfPieces,AvailablePieces).
+
+%% check if at the Board State PieceID win at [Row,Col]
 checkWinPosition(Board,PieceID,Row,Col):-
 	isEmpty(Board,Row,Col),
 	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
 	check_win(NewBoard,_,_,_),!.
 
+
+printRC(R,C):-write('['),write(R),write(','),write(C),write(']'),nl.
 printGameState(Board):-
 	getNonLoosesPieces(Board,NLP),
 	printRC('NonLoosesPieces',NLP),
@@ -104,16 +114,10 @@ printGameState(Board):-
 
 
 /*Choosing Piece To give */
-choosePiece(_,N,MyPieceID,PieceID,PiecesList,LoosePieces):-
-	givePiece(N,MyPieceID,PieceID,PiecesList,LoosePieces)
-.
-choosePiece(Board,_,_,PieceID,_,_):-
-	getAvailablePieces(Board,AvailablePieces),
-	write('random choose:'), nl,
-	randomPiece(PieceID,AvailablePieces).
 
 askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
 	countPieces(N,Board),
+	N<16,
 	printAvailablePieces(Board),
 	getLoosesPieces(Board,LoosePieces),
 	write('LoosePieces:'),write(LoosePieces),nl,
@@ -124,21 +128,36 @@ askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
 	choosePiece(Board,N,MyPieceID,PieceID,PiecesList,LoosePieces),
 	write('I choose :'),printAPiece(PieceID).
 
+%% choose a piece with the predicate givePiece
+choosePiece(_,N,MyPieceID,PieceID,PiecesList,LoosePieces):-
+	givePiece(N,MyPieceID,PieceID,PiecesList,LoosePieces)
+.
+%% choose a random Piece if givePiece failed
+choosePiece(Board,_,_,PieceID,_,_):-
+	getAvailablePieces(Board,AvailablePieces),
+	write('random choose:'), nl,
+	randomPiece(PieceID,AvailablePieces).
+%% choose a Piece for the first turn
 givePiece(0,_,PieceID,AvailablePieces,_):-
 	randomPiece(PieceID,AvailablePieces)
 .
+
+%% search a Piece to give and check if the piece a good is playable
 givePiece(N,MyPieceID,PieceID,AvailablePieces,LoosePieces):-
 	findPiece(N,MyPieceID,PieceID),
 	checkPiece(PieceID,AvailablePieces,LoosePieces).
+%% if any piece are good enough give piece choose randomly in a not loosing pieces list
 givePiece(_,_,PieceID,AvailablePieces,LoosePieces):-
 	randomPiece(PieceID,AvailablePieces),
 	\+memberchk(PieceID,LoosePieces)
 .
 
+%% check the piece
 checkPiece(PieceID,AvailablePieces,LoosePieces):-
 	memberchk(PieceID,AvailablePieces),
 	\+memberchk(PieceID,LoosePieces).
 
+%% findPiece searching for a Piece with few Attributes in common for 5 first turn and after choose with most Attributes in common
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	invertPiece(MyPieceID,PieceID).
@@ -168,7 +187,7 @@ findPiece(N,MyPieceID,PieceID):-
 randomPiece(RandomPiece,AvailablePieces):-
 	random_member(RandomPiece,AvailablePieces).
 
-	/* Choosing better Place For my Piece */
+/* Choosing better Place For my Piece */
 
 
 
@@ -188,8 +207,7 @@ readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 	choosePosition(Board,PieceID,Row,Col)
 	.
-
-
+%% check a Position if the AI can loose next turn
 goodMove(_,0,_,_).
 goodMove(Board,PieceID,Row,Col):-
 	isEmpty(Board,Row,Col),
@@ -197,23 +215,22 @@ goodMove(Board,PieceID,Row,Col):-
 	getAvailablePieces(NewBoard,AP),
 	\+getLoosesPieces(NewBoard,AP)
 	.
-emptyList([]).
+
+%% searching for a position
 choosePosition(Board,PieceID,Row,Col):-
 	printAPiece(PieceID),
 	countPieces(N,Board),
 	findPosition(N,Board,PieceID,Row,Col).
 
-
-/*trouvez une position sans aligenement 0-5*/
+%% searching for a position 
 findPosition(N,Board,_,Row,Col):-
 	N<5,N>0,write('find X<5'),nl,
 	optimalPos(4,Board,0,Row,Col)
 .
 
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,
+	N>9,
 	write('find Defense'),nl,
-	getLoosesPieces(Board,[]),
 	getNonLoosesPieces(Board,NLP),
 	NLP == [PieceID],
 	findDefensePosition(Board,PieceID,Row,Col)
@@ -227,14 +244,18 @@ findPosition(N,Board,PieceID,Row,Col):-
 	optimalPos(1,Board,PieceID,Row,Col)
 .
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,write('find 0'),nl,
-	optimalPos(0,Board,PieceID,Row,Col)
+	N>5,N<10,
+	write('find Defense'),nl,
+	getNonLoosesPieces(Board,NLP),
+	NLP == [PieceID],
+	findDefensePosition(Board,PieceID,Row,Col)
 .
 findPosition(_,Board,_,Row,Col):-
 	isEmpty(Board,Row,Col),
 	random_member(Row,[2,3,1,4]),
-	random_member(Col,[2,3,1,4]),!
+	random_member(Col,[2,3,1,4])
 .
+%% if the AI is in bad state we just have to play in a possible opponent wining position
 findDefensePosition(Board,PieceID,Row,Col):-
 	write('try Defensive'),nl,
 	getLoosesPieces(Board,LoosePieces),
@@ -242,34 +263,7 @@ findDefensePosition(Board,PieceID,Row,Col):-
 	checkWinPosition(Board,AvailablePiece,Row,Col),
 	goodMove(Board,PieceID,Row,Col)
 .
-%% Defensive
 
-optimalPos(N,Board,PieceID,Row,Col):-
-	optimalPos(N,N,N,Board,PieceID,Row,Col).
-
-optimalPos(N,Board,PieceID,Row,Col):-
-	optimalPos(N,_,_,Board,PieceID,Row,Col).
-
-optimalPos(N,Board,PieceID,Row,Col):-
-	optimalPos(_,N,_,Board,PieceID,Row,Col).
-
-optimalPos(N,Board,PieceID,Row,Col):-
-	optimalPos(_,_,N,Board,PieceID,Row,Col).
-
-
-optimalPos(N1,N2,N3,Board,PieceID,Row,Col):-
-	piece(PieceID,Attributes),
-	memberchk(RAttribute,Attributes),
-	selectListPiece(Row,Board,SelectedRow),
-	searchNAttribute(N1,SelectedRow,RAttribute),
-	memberchk(CAttribute,Attributes),
-	boardRowToCol(Board,ColBoard),
-	selectListPiece(Col,ColBoard,SelectedCol),
-	searchNAttribute(N2,SelectedCol,CAttribute),
-
-	checkDiag(N3,Board,Row,Col,Attributes),
-	goodMove(Board,PieceID,Row,Col)
-	.
 checkDiag(N1,Board,Row,Col,Attributes):-
 	memberchk(DAttribute,Attributes),
 	boardDiagonal(Board,BoardDiagonal),
@@ -307,3 +301,28 @@ diagRowCol(2,DiagPos,DiagPos,DiagPos2):-
 boardDiagonal([[W1,_,_,Z1],[_,X2,Y2,_],[_,X3,Y3,_],[W4,_,_,Z4]],[[W1,X2,Y3,Z4],[W4,X3,Y2,Z1]]).
 
 boardRowToCol([[W1,X1,Y1,Z1],[W2,X2,Y2,Z2],[W3,X3,Y3,Z3],[W4,X4,Y4,Z4]],[[W1,W2,W3,W4],[X1,X2,X3,X4],[Y1,Y2,Y3,Y4],[Z1,Z2,Z3,Z4]]).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(N,N,N,Board,PieceID,Row,Col).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(N,_,_,Board,PieceID,Row,Col).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(_,N,_,Board,PieceID,Row,Col).
+
+optimalPos(N,Board,PieceID,Row,Col):-
+	optimalPos(_,_,N,Board,PieceID,Row,Col).
+optimalPos(N1,N2,N3,Board,PieceID,Row,Col):-
+	piece(PieceID,Attributes),
+	memberchk(RAttribute,Attributes),
+	selectListPiece(Row,Board,SelectedRow),
+	searchNAttribute(N1,SelectedRow,RAttribute),
+	memberchk(CAttribute,Attributes),
+	boardRowToCol(Board,ColBoard),
+	selectListPiece(Col,ColBoard,SelectedCol),
+	searchNAttribute(N2,SelectedCol,CAttribute),
+
+	checkDiag(N3,Board,Row,Col,Attributes),
+	goodMove(Board,PieceID,Row,Col)
+.
