@@ -3,7 +3,6 @@ askPiece_human(inline,Board,PieceID) :-
 	write('Enter a piece ID : '),
 	read(PieceID),
 	isAvailable(Board,PieceID).
-	%% debugHere.
 
 askPiece_human(inline,Board,PieceID) :-
 	write('This piece is not available! Try again!'),nl,
