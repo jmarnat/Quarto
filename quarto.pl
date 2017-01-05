@@ -22,12 +22,8 @@ attribute(hole,flat,1).
 attribute(empty,nul,' ').
 
 interface(inline).
-interface(graphical).
+interface(gui).
 
-player(human).
-player(random).
-
-%% playerType
 
 piece(0,[nul,nul,nul,nul]).
 piece(1,[white,short,round,hole]).
@@ -77,58 +73,93 @@ debugHere :-
 * GAME PLAY BASIC ROUNDS *
 *************************/
 
-test_play(_,_,_,0).
+count_item(_,[],0).
+count_item(E,[E|T],N) :-
+	count_item(E,T,N2),
+	N is N2 + 1.
+count_item(E,[E2|T],N) :-
+	E \== E2,
+	count_item(E,T,N).
+
 test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
-	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0),
-	test_play(Interface,Heuristics1,Heuristics2,NumTime2),
+	test_play(Interface,Heuristics1,Heuristics2,NumTime,WinnersList),
+	count_item(1,WinnersList,N1),
+	count_item(2,WinnersList,N2),
+	write(Heuristics1),write(' won '),write(N1),write('x\n'),
+	write(Heuristics2),write(' won '),write(N2),write('x\n').
+
+
+
+test_play(_,_,_,0,[]).
+test_play(Interface,Heuristics1,Heuristics2,NumTime,[Winner|Rest]) :-
+	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0,Winner),
+	test_play(Interface,Heuristics1,Heuristics2,NumTime2,Rest),
 	NumTime is (NumTime2 + 1).
 
 
-play(Interface,Heuristics1,Heuristics2) :-
+play(inline,Heuristics1,Heuristics2) :-
 	heuristics(Heuristics1),
 	heuristics(Heuristics2),
 	clear,
-	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0).
+	round(inline,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0,_).
+
+play(gui,Heuristics1,Heuristics2) :-
+	heuristics(Heuristics1),
+	heuristics(Heuristics2),
+	init(Heuristics1,[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]),
+	round(gui,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0,_).
+	%% free.
 
 play(_,_,_) :-
 	write('\e[031mERROE: wrong heuristics name\e[0m').
 
 
+display_board_int(silent,_).
 
-
-
-
-
-
-round(inline,_,Board,NumPlayer,_) :-
-	%% debugHere,
-	check_win(Board,A,B,C),
-	%% swapPlayer(NumPlayer,Winner),
-	wipe,
-	printGameOver(NumPlayer,A,B,C),
+display_board_int(inline,Board) :-
 	draw_board(inline,Board).
 
+display_board_int(gui,Board) :-
+	forall(image_id(_,ID),free(ID)),
+	display_board(Board),
+	display_available_pieces(Board).
 
-round(inline,HeuristicsTab,Board,NumPlayer1,LastPieceID) :-
-	wipe,
-	draw_board(inline,Board),
+
+printPlayer(silent,_,_).
+
+printPlayer(gui,NumPlayer1,Heuristics1) :-
+	printPlayer_inline(NumPlayer1,Heuristics1).
+
+printPlayer(inline,NumPlayer1,Heuristics1) :-
+	printPlayer_inline(NumPlayer1,Heuristics1).
+
+
+
+round(Interface,_,Board,Winner,_,Winner) :-
+	check_win(Board,A,B,C),
+	%% wipe,
+	printGameOver(Winner,A,B,C),
+	display_board_int(Interface,Board).
+
+
+
+round(Interface,HeuristicsTab,Board,NumPlayer1,LastPieceID,Winner) :-
+	%% wipe,
+	display_board_int(Interface,Board),
 	getHeuristics(HeuristicsTab,NumPlayer1,Heuristics1),
-	printPlayer(NumPlayer1,Heuristics1),
+	printPlayer(Interface,NumPlayer1,Heuristics1),
 	askPiece(inline,Heuristics1,Board,PieceID,LastPieceID),
 
 	swapPlayer(NumPlayer1,NumPlayer2),
 
-	wipe,
-	draw_board(inline,Board),
+	%% wipe,
+	%% display_board_int
 	getHeuristics(HeuristicsTab,NumPlayer2,Heuristics2),
-	printPlayer(NumPlayer2,Heuristics2),
+	printPlayer(Interface,NumPlayer2,Heuristics2),
 
 	readPosition(inline,Heuristics2,Board,PieceID,Row,Column),
 	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
-	round(inline,HeuristicsTab,NewBoard,NumPlayer2,PieceID).
-
-
-
+	round(Interface,HeuristicsTab,NewBoard,NumPlayer2,PieceID,Winner).
 
 
 /******************
@@ -184,8 +215,20 @@ putPieceOnLine(PieceID,Column,[H|T],[H|T2]) :-
 isInBoard(Board,PieceID) :-
 	getPieceID(Board,_,_,PieceID).
 
-isAvailable(Board,PieceID) :-
-	\+ isInBoard(Board,PieceID).
+
+isNotInList([],_).
+isNotInList([H|T],Item) :-
+	H \= Item,
+	isNotInList(T,Item).
+
+isAvailable([],_).
+isAvailable([FirstRow|Rest],PieceID) :-
+	isNotInList(FirstRow,PieceID),
+	isAvailable(Rest,PieceID).
+
+
+
+
 
 getAvailablePieces(Board,ListOfPieces) :-
 	getAvailablePiecesBis(Board,ListOfPieces,1).
@@ -199,6 +242,7 @@ getAvailablePiecesBis(Board,[PieceID|ListOfPieces],PieceID) :-
 getAvailablePiecesBis(Board,ListOfPieces,PieceID) :-
 	PieceID < 17,
 	NewPieceID is (PieceID + 1),
+	isInBoard(Board,PieceID),
 	getAvailablePiecesBis(Board,ListOfPieces,NewPieceID).
 
 

@@ -65,9 +65,9 @@ printAvailablePiecesBis(Board,PieceID) :-
 	isAvailable(Board,PieceID),
 	write('\t'),
 	write(PieceID),
-	write(' ('),
-	printPiece(PieceID),
-	write(')'),nl,
+	write(' :'),
+	printPiece(PieceID),nl,
+	%% write(')'),nl,
 	printAvailablePiecesBis(Board,NewPieceID).
 printAvailablePiecesBis(Board,PieceID) :-
 	PieceID < 17,
@@ -76,13 +76,25 @@ printAvailablePiecesBis(Board,PieceID) :-
 
 printPiece(PieceID) :-
 	piece(PieceID,ListOfAttributes),
-	printPieceBis(ListOfAttributes).
+	printPieceShort(ListOfAttributes),
+	printPieceAttr(ListOfAttributes).
 
-printPieceBis([]).
-printPieceBis([FirstAttribute|Rest]) :-
+
+printPieceShort(ListOfAttributes) :-
+	write(' ('),
+	printPieceShort_bis(ListOfAttributes),
+	write(') ').
+printPieceShort_bis([]).
+printPieceShort_bis([FirstAttribute|Rest]) :-
 	attribute(_,FirstAttribute,Value),
 	write(Value),
-	printPieceBis(Rest).
+	printPieceShort_bis(Rest).
+
+printPieceAttr([]).
+printPieceAttr([FirstAttribute|Rest]) :-
+	write(' '),
+	write(FirstAttribute),
+	printPieceAttr(Rest).
 
 
 numbering(1,'1st').
@@ -107,7 +119,7 @@ printGameOver(Winner,A,B,C) :-
 		write(B),
 	write('\e[0m'),nl.
 
-printPlayer(Num,Heuristics) :-
+printPlayer_inline(Num,Heuristics) :-
 	%% Heuristics =.. HeuristicsName
 	write('[PLAYER '),
 	write(Num),
