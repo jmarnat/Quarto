@@ -106,13 +106,6 @@ printGameState(Board):-
 
 
 
-
-
-
-
-
-
-
 /*Choosing Piece To give */
 
 askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
@@ -126,7 +119,7 @@ askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
 	subtract(PossiblePieces,LoosePieces,PiecesList),
 	write('PiecesList:'),write(PiecesList),nl,
 	choosePiece(Board,N,MyPieceID,PieceID,PiecesList,LoosePieces),
-	write('I choose :'),printAPiece(PieceID).
+	write('I choose :'),printAPiece(PieceID),!.
 
 %% choose a piece with the predicate givePiece
 choosePiece(_,N,MyPieceID,PieceID,PiecesList,LoosePieces):-
@@ -192,14 +185,6 @@ randomPiece(RandomPiece,AvailablePieces):-
 
 
 
-
-
-
-
-
-
-
-
 %% Searching for a wining position
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
 	checkWinPosition(Board,PieceID,Row,Col).
@@ -246,8 +231,6 @@ findPosition(N,Board,PieceID,Row,Col):-
 findPosition(N,Board,PieceID,Row,Col):-
 	N>5,N<10,
 	write('find Defense'),nl,
-	getNonLoosesPieces(Board,NLP),
-	NLP == [PieceID],
 	findDefensePosition(Board,PieceID,Row,Col)
 .
 findPosition(_,Board,_,Row,Col):-
@@ -264,6 +247,7 @@ findDefensePosition(Board,PieceID,Row,Col):-
 	goodMove(Board,PieceID,Row,Col)
 .
 
+%%  optimalPos searching for N attributes in common in line, column or diagonal 
 checkDiag(N1,Board,Row,Col,Attributes):-
 	memberchk(DAttribute,Attributes),
 	boardDiagonal(Board,BoardDiagonal),
@@ -274,6 +258,8 @@ checkDiag(N1,Board,Row,Col,Attributes):-
 .
 checkDiag(_,_,Row,Col,_):-
 	\+diagRowCol(_,_,Row,Col).
+
+%% search exactly N times an Attribute in a list of piece 
 searchNAttribute(N,[],_):-
 	N is 0.
 searchNAttribute(N,[0|RestOfPieces],nul):-
@@ -287,10 +273,11 @@ searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
 
 searchNAttribute(N,[_|RestOfPieces],Attribute):-
 	searchNAttribute(N,RestOfPieces,Attribute).
+%% search an attribute in a piece
 searchAttribute(PieceID,Attribute):-
 	piece(PieceID,Attributes),
 	memberchk(Attribute,Attributes).
-
+%% selectListPiece select a list in the Board List of Row
 selectListPiece(1,[X|_],X).
 selectListPiece(2,[_|[X|_]],X).
 selectListPiece(3,[_,_,X,_],X).
