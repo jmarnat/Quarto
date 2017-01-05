@@ -216,8 +216,6 @@ findPosition(N,Board,_,Row,Col):-
 findPosition(N,Board,PieceID,Row,Col):-
 	N>9,
 	write('find Defense'),nl,
-	getNonLoosesPieces(Board,NLP),
-	NLP == [PieceID],
 	findDefensePosition(Board,PieceID,Row,Col)
 .
 findPosition(N,Board,PieceID,Row,Col):-
