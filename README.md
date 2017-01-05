@@ -3,10 +3,10 @@
 
 ## How to play :
 The goal is to align 4 pieces with the same characteristics :
-* color (white|black)
-* height (short|long)
-* geometry (round|square)
-* hole (hole|flat)
+	* color (`white`|`black`)
+	* height (`short`|`long`)
+	* geometry (`round`|`square`)
+	* hole (`hole`|`flat`)
 
 The game follow this order :
 1. You choose a piece to give to your adversary;
@@ -16,19 +16,29 @@ The game follow this order :
 ## Run :
 1. Run prolog using swipl or whatever,
 2. Just load the main file by typing `consult('main.pl')`.
-3. Then play by typing `play(inline,Heuristics1,Heuristics2)`, with Heuristics beeing :
-  * human
-  * random
-
+3. Then play by typing `play(Interface,Heuristics1,Heuristics2)` with:
+	* `Interface` among:
+		* `inline`
+		* `silent` (for testing only)
+		* `gui`
+	* `Heuristics` among:
+		* `human`
+		* `random`
+		* `ai_antho`
+		* `josselin`
+		* `clement`
+		* `jeremie`
+4. To display the board graphically, you need to have XQuartz installed first (MacOS).
 
 ## To-do list :
 * Interfaces :
 	- [x] inline
-	- [ ] GUI
+	- [x] GUI : display
+	- [ ] GUI : interactions
 * Heuristics :
 	* [x] human
 	* [x] random
-	* [ ] strategy (Anthony)
-	* [ ] ??? (Clément)
+	* [x] ai_antho
+	* [x] clement
 	* [ ] &alpha;&beta; (Jérémie)
-	* [ ] minimax (Josselin)
+	* [ ] josselin
