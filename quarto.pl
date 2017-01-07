@@ -63,12 +63,6 @@ debugHere :-
 
 
 
-
-
-
-
-
-
 /*************************
 * GAME PLAY BASIC ROUNDS *
 *************************/
@@ -110,8 +104,11 @@ play(gui,Heuristics1,Heuristics2) :-
 	round(gui,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0,_).
 	%% free.
 
-play(_,_,_) :-
-	write('\e[031mERROE: wrong heuristics name\e[0m').
+play(I,H1,H2) :-
+	write('\e[031mERROR: wrong heuristics name : play('),
+	write(I),write(','),
+	write(H1),write(','),
+	write(H2),write(')\e[0m').
 
 
 display_board_int(silent,_).
@@ -128,11 +125,15 @@ display_board_int(gui,Board) :-
 printPlayer(silent,_,_).
 
 printPlayer(gui,NumPlayer1,Heuristics1) :-
-	printPlayer_inline(NumPlayer1,Heuristics1).
+	display_player(NumPlayer1,Heuristics1).
 
 printPlayer(inline,NumPlayer1,Heuristics1) :-
 	printPlayer_inline(NumPlayer1,Heuristics1).
 
+
+display_piece_to_play_int(inline,_).
+display_piece_to_play_int(gui,PieceID) :-
+	display_piece_to_play(PieceID).
 
 
 round(Interface,_,Board,Winner,_,Winner) :-
@@ -141,8 +142,6 @@ round(Interface,_,Board,Winner,_,Winner) :-
 	printGameOver(Winner,A,B,C),
 	display_board_int(Interface,Board).
 
-
-
 round(Interface,HeuristicsTab,Board,NumPlayer1,LastPieceID,Winner) :-
 	%% wipe,
 	display_board_int(Interface,Board),
@@ -150,7 +149,10 @@ round(Interface,HeuristicsTab,Board,NumPlayer1,LastPieceID,Winner) :-
 	printPlayer(Interface,NumPlayer1,Heuristics1),
 	askPiece(inline,Heuristics1,Board,PieceID,LastPieceID),
 
+
 	swapPlayer(NumPlayer1,NumPlayer2),
+	display_piece_to_play_int(Interface,PieceID),
+	%% display_board_int(Interface,Board),
 
 	%% wipe,
 	%% display_board_int

@@ -32,8 +32,26 @@ image_id(14,@image14).
 image_id(15,@image15).
 image_id(16,@image16).
 
+text_id(1,@text1).
+text_id(2,@text2).
+text_id(3,@text3).
+text_id(4,@text4).
+text_id(5,@text5).
+text_id(6,@text6).
+text_id(7,@text7).
+text_id(8,@text8).
+text_id(9,@text9).
+text_id(10,@text10).
+text_id(11,@text11).
+text_id(12,@text12).
+text_id(13,@text13).
+text_id(14,@text14).
+text_id(15,@text15).
+text_id(16,@text16).
+
 
 init(FirstHeuristics,Board) :-
+	free,
 	init_window(),
 	display_grid(),
 	display_player(1,FirstHeuristics),
@@ -71,15 +89,21 @@ display_player(Num,Heuristics) :-
 	send(@window, display, new(@textplayer, text(Txt)), point(120, 50)),
 	send(@textplayer,colour,colour(white)),
 	send(@textplayer,font,font(helvetica,roman,15)).
-	
+
 
 display_piece_onboard(0,_,_).
-	%% display_cell(X,Y).
 display_piece_onboard(PieceID,X,Y) :-
 	decay(PieceID,D),
 	XScaled is 100 + (X * 100) + D,
 	YScaled is 100 + (Y * 100),
 	display_piece(PieceID,XScaled,YScaled).
+
+display_piece_to_play(PieceID) :-
+	image_id(PieceID,ID),
+	free(ID),
+	display_piece(PieceID,10,10).
+
+
 
 display_piece(PieceID,XScaled,YScaled) :-
 	atom_concat('images/',PieceID,Path1),
@@ -88,6 +112,14 @@ display_piece(PieceID,XScaled,YScaled) :-
 	send(@window,display,new(ImageID,bitmap(Path)),point(YScaled,XScaled)),
 	send(ImageID,recogniser,click_gesture(left,'',single,message(@prolog,clicked_piece,PieceID))).
 
+/*
+	text_id(PieceID,TextID),
+	XText is XScaled + 50,
+	YText is YScaled + 10,
+	send(@window,display,new(TextID,text(PieceID)),point(XText,YText)),
+	send(TextID,colour,colour(gray)),
+	send(TextID,font,font(helvetica,roman,1)).
+*/
 display_cell(X,Y) :-
 	cell_id(X,Y,ImageID),
 	XScaled is 90 + (X * 100),
@@ -211,6 +243,7 @@ get_black_pieces([_PieceID|Rest],L2) :-
 free :-
 	forall(image_id(_,ID),free(ID)),
 	forall(cell_id(_,_,ID),free(ID)),
+	forall(text_id(_,ID),free(ID)),
 	free(@textplayer),
 	free(@window),
 	free(@bg).
