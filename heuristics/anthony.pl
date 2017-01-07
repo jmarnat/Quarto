@@ -106,7 +106,7 @@ printGameState(Board):-
 
 
 /*Choosing Piece To give */
-askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
+askPiece_anthony(inline,Board,PieceID,MyPieceID):-
 	countPieces(N,Board),
 	getLoosesPieces(Board,LoosePieces),
 	getAvailablePieces(Board,PossiblePieces),
@@ -186,10 +186,10 @@ randomPiece(RandomPiece,AvailablePieces):-
 
 
 %% Searching for a wining position
-readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
+readPosition_anthony(inline,Board,PieceID,Row,Col):-
 	checkWinPosition(Board,PieceID,Row,Col),!.
 
-readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
+readPosition_anthony(inline,Board,PieceID,Row,Col):-
 
 	choosePosition(Board,PieceID,Row,Col),
 	isEmpty(Board,Row,Col),!.

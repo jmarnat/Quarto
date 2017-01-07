@@ -15,8 +15,5 @@ readPosition_random(inline,Board,_,Row,Col) :-
 	isEmpty(Board,Row,Col).
 
 readPosition_random(inline,Board,_,Row,Col) :-
-	random_member(Row,[1,2,3,4]),
-	random_member(Col,[1,2,3,4]),
-	isFull(Board,Row,Col),
 	readPosition_random(inline,Board,_,Row,Col).
 

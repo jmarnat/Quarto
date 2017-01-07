@@ -1,4 +1,4 @@
-askPiece_clement(inline,Board,PieceID,LastPieceId) :-
+askPiece_clement(inline,Board,PieceID,_LastPieceId) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	get_list_win(Board,ListWin),
 	not(member([Carac,_,_],ListWin)),
@@ -21,7 +21,6 @@ askPiece_clement(inline,Board,PieceID) :-
 	nl.
 
 readPosition_clement(inline,Board,PieceID,Row,Col) :-
-
 	get_list_win(Board,ListWin),
 	random_member([Carac,Row,Col],ListWin),
 	piece(PieceID,[Carac,_,_,_]),                          

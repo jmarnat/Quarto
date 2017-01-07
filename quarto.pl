@@ -136,13 +136,22 @@ display_piece_to_play_int(gui,PieceID) :-
 	display_piece_to_play(PieceID).
 
 
+round(_Interface,_,Board,_,_,0) :-
+	%% write('checking fullness of the board... '),
+	getAvailablePieces(Board,ListOfPieces),
+	length(ListOfPieces,0),
+	write('!! NOBODY WINS !!').
+
 round(Interface,_,Board,Winner,_,Winner) :-
+	%% write('checking winner... '),
 	check_win(Board,A,B,C),
 	%% wipe,
 	printGameOver(Winner,A,B,C),
 	display_board_int(Interface,Board).
+	%% write('winner !\n').
 
 round(Interface,HeuristicsTab,Board,NumPlayer1,LastPieceID,Winner) :-
+	%% write('new round...\n'),
 	%% wipe,
 	display_board_int(Interface,Board),
 	getHeuristics(HeuristicsTab,NumPlayer1,Heuristics1),
@@ -159,8 +168,13 @@ round(Interface,HeuristicsTab,Board,NumPlayer1,LastPieceID,Winner) :-
 	getHeuristics(HeuristicsTab,NumPlayer2,Heuristics2),
 	printPlayer(Interface,NumPlayer2,Heuristics2),
 
+	%% write('readPosition... '),
 	readPosition(inline,Heuristics2,Board,PieceID,Row,Column),
+	%% write('done\n'),
+	%% write('putPieceOnBoard... '),
 	putPieceOnBoard(PieceID,Row,Column,Board,NewBoard),
+	%% write('done\n'),
+	%% write('next round...\n'),
 	round(Interface,HeuristicsTab,NewBoard,NumPlayer2,PieceID,Winner).
 
 

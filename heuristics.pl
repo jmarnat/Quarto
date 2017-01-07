@@ -3,7 +3,7 @@ library(random).
 /* CONSULTING HEURISTICS FILES */
 :- consult('heuristics/human.pl').
 :- consult('heuristics/random.pl').
-:- consult('heuristics/ai_antho.pl').
+:- consult('heuristics/anthony.pl').
 :- consult('heuristics/clement.pl').
 :- consult('heuristics/josselin.pl').
 
@@ -12,7 +12,7 @@ getHeuristics([Heuristics1,_],1,Heuristics1).
 getHeuristics([_,Heuristics2],2,Heuristics2).
 
 heuristics(human).
-heuristics(ai_antho).
+heuristics(anthony).
 heuristics(random).
 heuristics(clement).
 heuristics(josselin).
@@ -28,8 +28,8 @@ askPiece(inline,human,Board,PieceID,_) :-
 askPiece(inline,random,Board,PieceID,_) :-
 	askPiece_random(inline,Board,PieceID).
 
-askPiece(inline,ai_antho,Board,PieceID,LastPieceId) :-
-	askPiece_ai_antho(inline,Board,PieceID,LastPieceId).
+askPiece(inline,anthony,Board,PieceID,LastPieceId) :-
+	askPiece_anthony(inline,Board,PieceID,LastPieceId).
 
 askPiece(inline,josselin,Board,PieceID,_LastPieceId) :-
 	askPiece_josselin(inline,Board,PieceID).
@@ -46,8 +46,8 @@ readPosition(inline,human,Board,PieceID,Row,Col) :-
 readPosition(inline,random,Board,PieceID,Row,Col) :-
 	readPosition_random(inline,Board,PieceID,Row,Col).
 
-readPosition(inline,ai_antho,Board,PieceID,Row,Col) :-
-	readPosition_ai_antho(inline,Board,PieceID,Row,Col).
+readPosition(inline,anthony,Board,PieceID,Row,Col) :-
+	readPosition_anthony(inline,Board,PieceID,Row,Col).
 
 readPosition(inline,josselin,Board,PieceID,Row,Col) :-
 	readPosition_josselin(inline,Board,PieceID,Row,Col).
