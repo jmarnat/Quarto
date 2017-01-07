@@ -101,32 +101,22 @@ printGameState(Board):-
 	getLoosesPieces(Board,LP),
 	printRC('LoosesPieces',LP),
 	getAvailablePieces(Board,AP),
-	printRC('AvailablePieces',AP)
-.
-
-
-
-
-
-
-
+	printRC('AvailablePieces',AP).
 
 
 
 /*Choosing Piece To give */
-
 askPiece_ai_antho(inline,Board,PieceID,MyPieceID):-
 	countPieces(N,Board),
-	N<16,
-	printAvailablePieces(Board),
 	getLoosesPieces(Board,LoosePieces),
-	write('LoosePieces:'),write(LoosePieces),nl,
 	getAvailablePieces(Board,PossiblePieces),
-	write('PossiblePieces:'),write(PossiblePieces),nl,
 	subtract(PossiblePieces,LoosePieces,PiecesList),
-	write('PiecesList:'),write(PiecesList),nl,
 	choosePiece(Board,N,MyPieceID,PieceID,PiecesList,LoosePieces),
-	write('I choose :'),printAPiece(PieceID).
+	%% write('LoosePieces:'),write(LoosePieces),nl,
+	%% write('PossiblePieces:'),write(PossiblePieces),nl,
+	%% write('PiecesList:'),write(PiecesList),nl,
+	%% write('I choose :'),printAPiece(PieceID),
+	!.
 
 %% choose a piece with the predicate givePiece
 choosePiece(_,N,MyPieceID,PieceID,PiecesList,LoosePieces):-
@@ -139,7 +129,7 @@ choosePiece(Board,_,_,PieceID,_,_):-
 	randomPiece(PieceID,AvailablePieces).
 %% choose a Piece for the first turn
 givePiece(0,_,PieceID,AvailablePieces,_):-
-	randomPiece(PieceID,AvailablePieces)
+	randomPiece(PieceID,AvailablePieces)	
 .
 
 %% search a Piece to give and check if the piece a good is playable
@@ -161,60 +151,56 @@ checkPiece(PieceID,AvailablePieces,LoosePieces):-
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	invertPiece(MyPieceID,PieceID).
+
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	share1(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
+
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	share2(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
+
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share3(MyPieceID,PiecesList),
-	%% write(' Share 3 : '),write(PiecesList),nl,
 	memberchk(PieceID,PiecesList).
+
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share2(MyPieceID,PiecesList),
-	%% write(' Share 2 : '),write(PiecesList),nl,
 	memberchk(PieceID,PiecesList).
+
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share1(MyPieceID,PiecesList),
-	%% write(' Share 1 : '),write(PiecesList),nl,
 	memberchk(PieceID,PiecesList).
+
 randomPiece(RandomPiece,AvailablePieces):-
-	random_member(RandomPiece,AvailablePieces).
+	random_member(RandomPiece,AvailablePieces),!.
 
 /* Choosing better Place For my Piece */
 
 
 
 
-
-
-
-
-
-
-
-
 %% Searching for a wining position
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
-	checkWinPosition(Board,PieceID,Row,Col).
+	checkWinPosition(Board,PieceID,Row,Col),!.
 
 readPosition_ai_antho(inline,Board,PieceID,Row,Col):-
-	choosePosition(Board,PieceID,Row,Col)
-	.
+
+	choosePosition(Board,PieceID,Row,Col),
+	isEmpty(Board,Row,Col),!.
+
 %% check a Position if the AI can loose next turn
 goodMove(_,0,_,_).
 goodMove(Board,PieceID,Row,Col):-
 	isEmpty(Board,Row,Col),
 	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
 	getAvailablePieces(NewBoard,AP),
-	\+getLoosesPieces(NewBoard,AP)
-	.
+	\+getLoosesPieces(NewBoard,AP),!.
 
 %% searching for a position
 choosePosition(Board,PieceID,Row,Col):-
@@ -224,73 +210,72 @@ choosePosition(Board,PieceID,Row,Col):-
 
 %% searching for a position 
 findPosition(N,Board,_,Row,Col):-
-	N<5,N>0,write('find X<5'),nl,
-	optimalPos(4,Board,0,Row,Col)
-.
+	N<5,N>0,
+	optimalPos(4,Board,0,Row,Col).
 
 findPosition(N,Board,PieceID,Row,Col):-
-	N>9,
-	write('find Defense'),nl,
-	getNonLoosesPieces(Board,NLP),
-	NLP == [PieceID],
-	findDefensePosition(Board,PieceID,Row,Col)
-.
+	N>8,
+	findDefensePosition(Board,PieceID,Row,Col).
+
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,write('find 2'),nl,
-	optimalPos(2,Board,PieceID,Row,Col)
-.
+	N>5,
+	optimalPos(2,Board,PieceID,Row,Col).
+
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,write('find 1'),nl,
-	optimalPos(1,Board,PieceID,Row,Col)
-.
+	N>5,
+	optimalPos(1,Board,PieceID,Row,Col).
+
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,N<10,
-	write('find Defense'),nl,
-	getNonLoosesPieces(Board,NLP),
-	NLP == [PieceID],
-	findDefensePosition(Board,PieceID,Row,Col)
-.
+	N>5,N<9,
+	findDefensePosition(Board,PieceID,Row,Col).
+
 findPosition(_,Board,_,Row,Col):-
+
 	isEmpty(Board,Row,Col),
 	random_member(Row,[2,3,1,4]),
-	random_member(Col,[2,3,1,4])
-.
+	random_member(Col,[2,3,1,4]).
+
 %% if the AI is in bad state we just have to play in a possible opponent wining position
 findDefensePosition(Board,PieceID,Row,Col):-
-	write('try Defensive'),nl,
 	getLoosesPieces(Board,LoosePieces),
 	random_member(AvailablePiece,LoosePieces),
 	checkWinPosition(Board,AvailablePiece,Row,Col),
-	goodMove(Board,PieceID,Row,Col)
-.
+	goodMove(Board,PieceID,Row,Col).
 
+%%  optimalPos searching for N attributes in common in line, column or diagonal 
 checkDiag(N1,Board,Row,Col,Attributes):-
 	memberchk(DAttribute,Attributes),
 	boardDiagonal(Board,BoardDiagonal),
 	random_member(DiagPos,[3,1,4,2]),
 	selectListPiece(Diag,BoardDiagonal,SelectedDia),
 	searchNAttribute(N1,SelectedDia,DAttribute),
-	diagRowCol(Diag,DiagPos,Row,Col)
-.
+	diagRowCol(Diag,DiagPos,Row,Col).
+
 checkDiag(_,_,Row,Col,_):-
 	\+diagRowCol(_,_,Row,Col).
+
+%% search exactly N times an Attribute in a list of piece 
 searchNAttribute(N,[],_):-
 	N is 0.
+
 searchNAttribute(N,[0|RestOfPieces],nul):-
 	searchNAttribute(Nr,RestOfPieces,nul),
 	N is Nr+1.
+
 searchNAttribute(N,[PieceID|RestOfPieces],Attribute):-
 	searchAttribute(PieceID,Attribute),
 	searchNAttribute(Nr,RestOfPieces,Attribute),
-	N is Nr+1
-	.
+	N is Nr+1.
 
 searchNAttribute(N,[_|RestOfPieces],Attribute):-
 	searchNAttribute(N,RestOfPieces,Attribute).
+
+%% search an attribute in a piece
 searchAttribute(PieceID,Attribute):-
 	piece(PieceID,Attributes),
 	memberchk(Attribute,Attributes).
 
+%% selectListPiece select a list in the Board List of Row
 selectListPiece(1,[X|_],X).
 selectListPiece(2,[_|[X|_]],X).
 selectListPiece(3,[_,_,X,_],X).
@@ -324,5 +309,4 @@ optimalPos(N1,N2,N3,Board,PieceID,Row,Col):-
 	searchNAttribute(N2,SelectedCol,CAttribute),
 
 	checkDiag(N3,Board,Row,Col,Attributes),
-	goodMove(Board,PieceID,Row,Col)
-.
+	goodMove(Board,PieceID,Row,Col).

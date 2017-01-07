@@ -3,31 +3,15 @@ askPiece_clement(inline,Board,PieceID,LastPieceId) :-
 	get_list_win(Board,ListWin),
 	not(member([Carac,_,_],ListWin)),
 	piece(PieceID,[Carac,_,_,_]),
+	not(member([Carac1,_,_],ListWin)),
+	piece(PieceID,[_,Carac1,_,_]),
+	not(member([Carac2,_,_],ListWin)),
+	piece(PieceID,[_,_,Carac2,_]),
+	not(member([Carac3,_,_],ListWin)),
+	piece(PieceID,[_,_,_,Carac3]),
 	random_member(PieceID,ListOfAvailablePieces).
-	
-askPiece_clement(inline,Board,PieceID,LastPieceId) :-
-	getAvailablePieces(Board,ListOfAvailablePieces),
-	get_list_win(Board,ListWin),
-	not(member([Carac,_,_],ListWin)),
-	piece(PieceID,[_,Carac,_,_]),
-	random_member(PieceID,ListOfAvailablePieces).
-
-askPiece_clement(inline,Board,PieceID,LastPieceId) :-
-	getAvailablePieces(Board,ListOfAvailablePieces),
-	get_list_win(Board,ListWin),
-	not(member([Carac,_,_],ListWin)),
-	piece(PieceID,[_,_,Carac,_]),
-	random_member(PieceID,ListOfAvailablePieces).
-	
-
-askPiece_clement(inline,Board,PieceID,LastPieceId) :-
-	getAvailablePieces(Board,ListOfAvailablePieces),
-	get_list_win(Board,ListWin),
-	not(member([Carac,_,_],ListWin)),
-	piece(PieceID,[_,_,_,Carac]),
-	random_member(PieceID,ListOfAvailablePieces).
-	
-askPiece_random(inline,Board,PieceID) :-
+		
+askPiece_clement(inline,Board,PieceID) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	random_member(PieceID,ListOfAvailablePieces),
 	write('I chose the piece n°'),
@@ -40,7 +24,7 @@ readPosition_clement(inline,Board,PieceID,Row,Col) :-
 
 	get_list_win(Board,ListWin),
 	random_member([Carac,Row,Col],ListWin),
-	piece(PieceID,[Carac,_,_,_]),                          %% piece(PieceID,[_,Carac,_,_]);piece(PieceID,[_,_,Carac,_]);piece(PieceID,[_,_,_,Carac]))
+	piece(PieceID,[Carac,_,_,_]),                          
 	isEmpty(Board,Row,Col).
 
 readPosition_clement(inline,Board,PieceID,Row,Col) :-
