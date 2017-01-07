@@ -1,3 +1,6 @@
+/* gui.pl */
+/* J.MARNAT */
+
 cell_id(0,0,@cell1).
 cell_id(0,1,@cell2).
 cell_id(0,2,@cell3).
@@ -85,7 +88,7 @@ display_player(Num,Heuristics) :-
 	atom_concat(Txt1,' (',Txt2),
 	atom_concat(Txt2,Heuristics,Txt3),
 	atom_concat(Txt3,')',Txt),
-	free_or_not(@textplayer),
+	free(@textplayer),
 	send(@window, display, new(@textplayer, text(Txt)), point(120, 50)),
 	send(@textplayer,colour,colour(white)),
 	send(@textplayer,font,font(helvetica,roman,15)).

@@ -1,3 +1,5 @@
+/* clement.pl */
+
 askPiece_clement(inline,Board,PieceID,_LastPieceId) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	get_list_win(Board,ListWin),

@@ -1,29 +1,8 @@
-%% josselin.pl
+/* josselin.pl */
 
-
-%% askPiece_josselin(inline,Board,PieceID) :-
-%% 	%% getAvailablePieces(Board,ListOfAvailablePieces),
-%% 	%% random_member(PieceID,ListOfAvailablePieces),
-%% 	chooseBestValuedPiece(Board,PieceID),
-%% 	write('I chose the piece n°'),
-%% 	write(PieceID),
-%% 	write(' : '),
-%% 	printPiece(PieceID),
-	%% nl.
 
 askPiece_josselin(inline,Board,PieceID) :-
 	chooseBestValuedPiece(Board,PieceID).
-	%% isEmpty(Board,Row,Col),
-	%% putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
-
-	%% chooseBestValuedPiece(NewBoard,NewPieceID),
-	%% isEmpty(NewBoard,NewRow,NewCol),
-	%% putPieceOnBoard(NewPieceID,NewRow,NewCol,NewBoard,NewNewBoard),
-	%% check_win(NewNewBoard,_,_,_),
-	%% write('HE WINS !!!!'\n),!.
-
-	%% askPiece_josselin(inline,NewBoard,_PieceID),
-
 
 
 chooseBestValuedPiece(Board,PieceID) :-
@@ -33,7 +12,9 @@ chooseBestValuedPiece(Board,PieceID) :-
 chooseBestValuedPiece(Board,PieceID) :-
 	valuePiece(Board,PieceID,0),
 	write('val = 0\n').
-
+chooseBestValuedPiece(Board,PieceID) :-
+	valuePiece(Board,PieceID,-1000),
+	write('val = -1000\n').
 
 
 readPosition_josselin(inline,Board,PieceID,Row,Col) :-
@@ -92,8 +73,6 @@ not_member(Item,[H|T]) :-
 	Item \== H,
 	not_member(Item,T).
 
-
-
 clean_list([],[]).
 
 clean_list([],[]).
@@ -125,29 +104,6 @@ winning_attributes(Board,Attr) :-
 
 
 
-
-/*
-invert(_,[],[]).
-invert(Attr,[Attr|Rest],[NewAttr|Rest]) :-
-	invertAttribute(Attr,NewAttr).
-invert(Attr,[Attr1|Rest1],[Attr1|Rest2]) :-
-	Attr \== Attr1,
-	invert(Attr,Rest1,Rest2).
-
-
-
-invert_or_not([],ListAttr,ListAttr).
-invert_or_not([Attr|Rest],ListAttr,NewListAttr) :-
-	invert(Attr,ListAttr,ListAttr1),
-	invert_or_not(Rest,ListAttr1,NewListAttr).
-
-
-invert_list_attr([],[]).
-invert_list_attr([Attr|Rest1],[AttrInv|Rest2]) :-
-	invertAttribute(Attr,AttrInv),
-	invert_list_attr(Rest1,Rest2).
-*/
-
 find_piece_without_attributes(Board,ListAttr,PieceID) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	member(PieceID,ListOfAvailablePieces),
@@ -173,7 +129,28 @@ find_secure_piece_bis(Board,PieceID) :-
 
 
 
+/* this piece is forced to make me win */
+valuePiece(Board,PieceID,1000) :-
+	%% first, for every position, the next player can't win
+	isEmpty(Board,Row,Col),
+	forall(putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),not(check_win(NewBoard,_,_,_))),
+
+	%% then, whatever the piece he gives me, i'll win
+	getAvailablePieces(NewBoard,ListOfAvailablePieces),
+	member(NewPID,ListOfAvailablePieces),
+	forall(putPieceOnBoard(NewPID,_,_,NewBoard,NewNewBoard),check_win(NewNewBoard,_,_,_))
+.
+
+/* this piece can't makes me lose */
+valuePiece(Board,PieceID,1) :-
+	find_secure_piece(Board,PieceID).
+
+/* if i can't win, just select a piece randomly */
+valuePiece(Board,PieceID,0) :-
+	askPiece_random(inline,Board,PieceID).
+
 /* i'm forced to lose here */
+/* in fact, this should never happend */
 valuePiece(Board,PieceID,-1000) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	member(PieceID,ListOfAvailablePieces),
@@ -182,30 +159,3 @@ valuePiece(Board,PieceID,-1000) :-
 	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
 	check_win(NewBoard,_,_,_).
 
-/* this piece can't makes me lose */
-valuePiece(Board,PieceID,1) :-
-	find_secure_piece(Board,PieceID).
-
-valuePiece(Board,PieceID,0) :-
-	askPiece_random(inline,Board,PieceID).
-
-
-
-
-
-valuePiece(Board,PieceID,0) :-
-	getAvailablePieces(Board,ListOfAvailablePieces),
-	member(PieceID,ListOfAvailablePieces).
-
-/*
-findWinningAttributes(_,[]).
-findWinningAttributes(Board,[Attribute|ListOfAttributes]) :-
-	getAvailablePieces(Board,ListOfAvailablePieces),
-	member(PieceID,ListOfAvailablePieces),
-	isEmpty(Board,Row,Col),
-	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
-
-	check_win(NewBoard,Attribute,_,_),
-	not(member(Attribute,ListOfAttributes)),
-	findWinningAttributes(Board,ListOfAttributes).
-*/

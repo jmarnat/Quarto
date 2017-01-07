@@ -1,4 +1,4 @@
-%% This AI is base on a strategy made by Anthony
+/* anthony.pl */
 
 invertAttribute(white,black).
 invertAttribute(black,white).

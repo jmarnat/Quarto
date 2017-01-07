@@ -43,4 +43,4 @@ The game follow this order :
 	* [x] ai_antho
 	* [x] clement
 	* [ ] &alpha;&beta; (Jérémie)
-	* [ ] josselin
+	* [x] josselin

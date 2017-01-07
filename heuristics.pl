@@ -1,3 +1,6 @@
+/* heuristics.pl */
+/* everyone */
+
 library(random).
 
 /* CONSULTING HEURISTICS FILES */
@@ -20,7 +23,9 @@ heuristics(josselin).
 
 
 
-
+/* remapping all the askPiece and readPosition functions */
+/* because Prolog don't like separated clauses definitions */
+/* "Clauses of askPiece/5 are not together in the source-file" */
 
 askPiece(inline,human,Board,PieceID,_) :-
 	askPiece_human(inline,Board,PieceID).

@@ -1,3 +1,6 @@
+/* inline_interface.pl */
+/* J.MARNAT */
+
 space :- write(' ').
 
 clear :- write('\033[2J').

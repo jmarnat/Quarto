@@ -1,18 +1,9 @@
-/*
-- add your consults above
-- write this two functions :
-	askPiece(inline,<yourheuristics>,Board,PieceID)
-	readPosition(inline,<yourheuristics>,Board,PieceID,Row,Column)
+/* main.pl */
+/* J.MARNAT */
 
-*/
-
-
-
-/* CONSULTING BASE FILES */
+/* Just consulting the necessary files */
+/* (the heuristics are loaded within the heuristics.pl file) */
 :- consult('quarto.pl').
 :- consult('inline_interface.pl').
 :- consult('gui.pl').
 :- consult('heuristics.pl').
-
-%% :- write('FILES LOADED !'),nl,nl.
-%% :- write('\e[035mtype : "play(inline,human,random)" to begin\e[0m'),nl,nl.
