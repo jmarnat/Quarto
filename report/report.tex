@@ -1,7 +1,28 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{hyperref}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 
+\newcommand{\tw}[1]{\texttt{#1}}
+\newcommand{\mytable}[3]{
+	\begin{table}[ht]
+		\begin{center}
+			\begin{tabular}{#2}
+				#3
+			\end{tabular}
+		\caption{#1}
+		\end{center}
+	\end{table}
+}
+
+\newcommand{\board}[4]{
+	\begin{tabular}{|c|c|c|c|} \hline
+		#1 \\\hline
+		#2 \\\hline
+		#3 \\\hline
+		#4 \\\hline
+	\end{tabular}
+}
 
 \title{\textsc{Introduction to Artificial Intelligence}\\Quarto}
 \author{\begin{tabular}{r|l}
@@ -13,6 +34,7 @@
 \date{2016-2017}
 
 
+
 \begin{document}
 	\maketitle
 
@@ -21,47 +43,142 @@
 
 	\newpage
 	\section{Introduction}
+		% TODO
 
 	\section{Presentation of the game}
-	
+		\textit{The following description is adapted from the website \href{http://www.ludoteka.com/quarto-en.html}{http://www.ludoteka.com/quarto-en.html}.}
+
+		\paragraph{Origin:} Quarto is a board game recently invented by Blaise Muller (blaise.muller@9online.fr) and published by Gigamic
+
+		\paragraph{Description:} This is a game for two players. The board has 16 squares (4x4), and the 16 different pieces that can be constructed combinating the following four characteristics:
+		\begin{itemize}
+			\item Colour (white/black)
+			\item Size (long/short)
+			\item Shape (round/square)
+			\item Hole (hole/flat)
+		\end{itemize}
+		
+		\paragraph{Objective:} The aim of the game is to complete a line with four pieces that are similar at least about one of the four described characteristics (four big pieces, four little, four red, four blue, four circle, four square, four with hole or four without hole). The line may be vertical, horizontal or diagonal. The winner is the player who places the fourth piece of the line.
+
+		\paragraph{How the game goes on:} Players move alternatively, placing one piece on the board; once inserted, pieces cannot be moved. \\
+		One of the more special characteristics of this game is that the choice of the piece to be placed on the board is not made by the same player who places it; it is the opponent who, after doing his move, decides which will be the next piece to place. \\
+		So, each turn consists of two actions:
+		\begin{enumerate}
+			\item Place on the board the piece given by the opponent.
+			\item Give to the opponent the piece to be placed in the next move.
+		\end{enumerate}
+		In the first turn of the game, the player who starts has only to choose one piece for the opponent.
+
+		\paragraph{Final:} The game finishes in a draw when nobody reaches the objective after placing the 16 pieces.
+
+
+	\newpage
 	\section{Algorithm of the game-play}
+		If you look at the file named \tw{quarto.pl}, you'll see the following predicate:\\
+			\tw{play(Interface,Heuristics1,Heuristics2)},\\
+		who are running the game. \\
+		But the actual predicate who does the job is \tw{round(Interface,...)}, and here is how it works:
+		\begin{enumerate}
+			\item first, we check if the board is full $\rightarrow$ \textsc{Game Over}
+			\item then, we check if somebody wins $\rightarrow$ \textsc{Game Over}
+			\item if none of this first predicates come \tw{true}, we launch a round, splitted in two parts:
+			\begin{enumerate}
+				\item first part: the player need to choose a piece:
+				\begin{itemize}
+					\item we display the board, the player, the pieces \textit{etc.} ;
+					\item we ask a piece to the player (human or computer) ;
+				\end{itemize}
+				\item we swap the players to do the second part of the round:
+				\begin{itemize}
+					\item we display the piece to play;
+					\item we read the position where the player want to put the given piece;
+					\item then, we put the piece on the board (by getting a \tw{NewBoard});
+					\item finally, we run a new round with the baord obtained (return to 1.).
+				\end{itemize}
+			\end{enumerate}
+		\end{enumerate}
 
 	\section{Heuristics}
-		\subsection{Random}
-		\subsection{Anthony}
-		\subsection{Josselin}
-		\subsection{Clément}
-		\subsection{Jérémie}
+		\paragraph{Random (\tw{random.pl}):} this heuristics is the `stupid' one. \\
+		It selects a piece randomly among the available ones, and do the same thing for the position. This heuristics was created at the very beggining of the project, just to test the game-play, and to have a base to create the other ones.
+		
+		\textit{The following descriptions of the heuristics have been written by each team member.}
+		
+		\paragraph{Anthony (\tw{anthony.pl}):} The AI prepare the Board for the first 5 turn, minimizing the number of alignment between each pieces in the board, and by giving pieces sharing the fewer attributes with the piece the AI receive. \\
+		Why the five first turn are preparing the board? Because when you mimizing the number of alignement the fifth turn can share attributes between 2 and more lines. Thanks to all pieces giving because you giving all pieces that sharing fewer attributes as possible and the opponement have to pose them choosing by align with other pieces and not. In wich case it can helps us to do more alignement. \\
+		For next turns, the AI became more agressive by giving non loosing pieces and maximizing the number of attributes share with the last piece receive by the AI. And choosing position where we can maximizing the number of share aligments with the maximum of share. If the Board is too bad the AI (loosing next turn), then the AI play in a position that can free some pieces to give and possibly can switch the Board into good board (winning next turn).
+
+		\paragraph{Josselin (\tw{josselin.pl}):}
+		\paragraph{Clément (\tw{clement.pl}):} A main predicate is used in this heuristic. This is the ListWin predicate it goes through all the board and look for winning pieces. These winning positions are put in a list (coordinates with winning caracteristics). \\
+		When you need to place the piece that was given to you, the read position predicate look for a position where the piece can win if placed there. \\
+		On the other way when you need to choose a piece for your opponnent you use again the ListWin but this time the piece you give must not have a common caracteristics with one of the winnings piece in the ListWin so that your opponent can't win with this piece on his turn. \\
+		Example :
+		\board{1 & 0 & 0 & 10}{0 & 2 & 11 & 0}{0 & 0 & 3 & 0}{12 & 0 & 0 & 0} \\
+		With this board the winlist is:\\
+		\tw{[[white, 4, 4], [short, 4, 4], [black, 3, 2], [short, 3, 2]]} \\
+		You can win by either placing a white piece in 4,4 or a short one in 4,4 \textit{etc.}\\
+		In this board we cannot find a piece to win we have to loose considering there is a winnable position with a black piece and a white piece. Considering a piece is either white or black there is no solution. \\
+		In this case we call a random piece because the previous predicate will fail. \\
+		Exemple: \board{1 & 0 & 0 & 10}{0 & 2 & 11 & 0}{0 & 0 & 0 & 0}{12 & 0 & 0 & 0} \\
+		With this board the winlist is \tw{[[black, 3, 2], [short, 3, 2]]} \\
+		So after placing the piece we would choose one that doesn't allow our opponnent to win. \\
+		In this case we need a piece that isn't black or that isn't short.
+		
+		\paragraph{Jérémie (\tw{jeremie.pl}):}
 	
 	\section{User Interfaces}
 		\subsection{Inline mode}
-		\subsection{GUI : a XPCE adventure...}
+		\subsection{GUI: a XPCE adventure...}
 	
 	\section{Efficiency and challenges}	
 		\subsection{Stats foreach heuristics}
-			\begin{table}
-				\caption{each heuristics vs. random, over 100 iterations}
-				\begin{tabular}{l||}
-					Heuristics	& \# win	& lose	& nul	& CPU		& Time		\\
-					clement		& 54		& 39	& 7		& 0.703		& 0.023s	\\
-					josselin	& 100		& 0		& 0		& 34.608	& 38.881s	\\
-					anthony		& 
-				\end{tabular}
-			\end{table}
+			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
+				\hline
+				\#win		& random	& anthony	& josselin	& clement	& jeremie		\\\hline\hline
+				random		& 50		& 2			& 1			& 32		& x				\\\hline
+				anthony		& 100		& 29		& 68		& 100		& x				\\\hline
+				josselin	& 100		& 4			& 100		& 99		& x				\\\hline
+				clement		& 58		& 29		& 25		& 55		& x				\\\hline
+				jeremie		& x			& x			& x			& x			& x				\\\hline
+			}
+
+			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
+				\hline
+				TIME		& random	& anthony	& josselin		& clement	& jeremie	\\\hline\hline
+				random		& 0.4 s		& 4.7 s		& 33.3 s		& 0.8 s		& x			\\\hline
+				anthony		& 4.6 s		& 43.4 s	& 49.1 s		& 4.5 s		& x			\\\hline
+				josselin	& 39.6 s	& 48.8 s	& 89.4 s		& 39.7 s	& x			\\\hline
+				clement		& 0.7 s		& 4.6 s		& 34.6 s		& 1.1 s		& x			\\\hline
+				jeremie		& x			& x			& x				& x			& x			\\\hline
+			}
+
+			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
+				\hline
+				INFERENCES		& random	& anthony	& josselin	& clement	& jeremie	\\\hline\hline
+				random			& 2 M		& 36 M		& 304 M		& 5 M		& x			\\\hline
+				anthony			& 34 M		& 398 M		& 445 M		& 39 M		& x			\\\hline
+				josselin		& 341 M		& 430 M		& 827 M		& 342 M		& x			\\\hline
+				clement			& 5 M		& 38 M		& 315 M		& 8 M		& x			\\\hline
+				jeremie			& x			& x			& x			& x			& x			\\\hline
+			}
 				
 	
 	\section{Conclusion}
+		% git
+		% time
+		% gui interactions
+
+		\mytable{Approximate time for coding each files}{|l||l|r|}{\hline
+			\tw{quarto.pl}				& Josselin		& 12 h		\\\hline
+			\tw{inline\_interface.pl}	& Josselin		& 3 h		\\\hline
+			\tw{gui.pl}					& Josselin		& 10 h		\\\hline
+			\tw{random.pl}				& Josselin		& 5 m		\\\hline
+			\tw{human.pl}				& Josselin		& 15 m		\\\hline
+			\tw{anthony.pl}				& Anthony		& ?			\\\hline
+			\tw{clement.pl}				& Clément		& ?			\\\hline
+			\tw{jeremie.pl}				& Jérémie		& ?			\\\hline
+			\tw{josselin.pl}			& Josselin		& 10 h		\\\hline
+		}
+
+
 \end{document}
-
-
-% josselin won 100x
-% random won 0x
-% 336,435,244 inferences, 34.608 CPU in 38.881 seconds (89% CPU, 9721243 Lips)
-
-% clement won 54x
-% random won 39x
-% 5,184,168 inferences, 0.703 CPU in 0.823 seconds (85% CPU, 7376616 Lips)
-
-% anthony won 99x
-% random won 0x
-% 33,485,393 inferences, 3.683 CPU in 4.443 seconds (83% CPU, 9090781 Lips)
