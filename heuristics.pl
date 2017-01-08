@@ -9,6 +9,7 @@ library(random).
 :- consult('heuristics/anthony.pl').
 :- consult('heuristics/clement.pl').
 :- consult('heuristics/josselin.pl').
+:- consult('heuristics/jeremie.pl').
 
 
 getHeuristics([Heuristics1,_],1,Heuristics1).
@@ -19,6 +20,7 @@ heuristics(anthony).
 heuristics(random).
 heuristics(clement).
 heuristics(josselin).
+heuristics(jeremie).
 %% heuristics().
 
 
@@ -42,7 +44,8 @@ askPiece(inline,josselin,Board,PieceID,_LastPieceId) :-
 askPiece(inline,clement,Board,PieceID,LastPieceId) :-
 	askPiece_clement(inline,Board,PieceID,LastPieceId).
 
-
+askPiece(inline,jeremie,Board,PieceID,_) :-
+	askPiece_jeremie(inline,Board,PieceID).
 
 readPosition(inline,human,Board,PieceID,Row,Col) :-
 	write('Piece to play : '),printPiece(PieceID),nl,
@@ -59,3 +62,6 @@ readPosition(inline,josselin,Board,PieceID,Row,Col) :-
 
 readPosition(inline,clement,Board,PieceID,Row,Col) :-
 	readPosition_clement(inline,Board,PieceID,Row,Col).
+
+readPosition(inline,jeremie,Board,PieceID,Row,Col) :-
+	readPosition_jeremie(inline,Board,PieceID,Row,Col).
