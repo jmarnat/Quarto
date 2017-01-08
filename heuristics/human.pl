@@ -1,3 +1,6 @@
+/* human.pl */
+/* J.Marnat */
+
 askPiece_human(inline,Board,PieceID) :-
 	printAvailablePieces(Board),
 	write('Enter a piece ID : '),

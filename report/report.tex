@@ -176,6 +176,7 @@
 			The first interface, and still the efficient one, is the 'inline-mode' interface. Each round, we print in the terminal the board with the pieces described as binary values (0 or 1 for each attribute), display the available pieces, ask for a piece, and a position to the adversary. 
 
 		\subsection{GUI: an XPCE (mis)adventure...}
+			First, I need to tell that the little images of the pieces weren't made by us. We grab them on the nice website \href{http://quarto.freehostia.com/en/}{quarto.freehostia.com}, where you can play online. \\
 			Since \textsc{Prolog} is a pretty ``outside the box'' language, there isn't a lot of libraries who allows it to make a proper GUI with interactions. \\
 			I decided to use the only library who worked for me: \textsc{XPCE}, and after \textbf{a lot of time}, I was able to display the window with the board and the pieces, and trigger predicated by clicking on the cells or the pieces. But get the triggers into the execution of the rounds was just impossible. We can't say to \textsc{Prolog}: ``wait for somebody to click in the window and continue the round''. So at the end, I wasn't able to do that after all this time to try. \\
 			The fact is that we can actually output the number of the piece clicked into the terminal, and a line return to emulate a physical user, but \textsc{Prolog} do not recognize it as an actual input, while waiting for an \tw{read()}. \\
@@ -243,6 +244,9 @@
 
 	\newpage
 	\section{Appendices}
+		To have a common location to store the files of our project, we used the Version Control System \textsc{GitHub}. You can browse it at \href{https://github.com/jmarnat/Quarto}{https://github.com/jmarnat/Quarto}.\\[2cm]
+		
+
 		\mytable{Approximate time for coding each files}{|l||l|r|}{\hline
 			\tw{quarto.pl}				& Josselin		& 10-12 h	\\\hline
 			\tw{inline\_interface.pl}	& Josselin		& 3-4 h		\\\hline

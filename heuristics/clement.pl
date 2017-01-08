@@ -1,3 +1,5 @@
+/* clement.pl */
+
 askPiece_clement(inline,Board,PieceID,_) :-   %% WE PICK A PIECE THAT HAS NOTHING COMMON WITH A WINNING PIECE
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	get_list_win(Board,ListWin), %% WE GET THE LISTWIN

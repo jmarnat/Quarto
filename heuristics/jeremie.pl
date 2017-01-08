@@ -1,3 +1,5 @@
+/* jeremie.pl */
+
 equi_piece(0,[0,0,0,0]). %% Differents Caracteristics of every Piece
 equi_piece(1,[0,0,0,0]).
 equi_piece(2,[0,0,0,1]).

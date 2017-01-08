@@ -3,7 +3,7 @@
 
 library(random).
 
-/* CONSULTING HEURISTICS FILES */
+/* consulting heuristics files */
 :- consult('heuristics/human.pl').
 :- consult('heuristics/random.pl').
 :- consult('heuristics/anthony.pl').
