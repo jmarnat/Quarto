@@ -23,8 +23,13 @@ askPiece_jeremie(inline,Board,PieceID_adv) :- %% Give a Piece to the opponent
 	write(PieceID_adv),nl,
 	retractall(link_game(_,_)), %% Delete all the Knowledge
 	retractall(weight_board(_,_,_,_,_)), %% Delete all the Knowledge
-	isAvailable(Board,PieceID_adv).
-	
+	isAvailable(Board,PieceID_adv),!.
+
+askPiece_jeremie(inline,Board,PieceID):-
+	askPiece_random(inline,Board,PieceID).
+
+
+
 readPosition_jeremie(inline,Board,PieceID,Row,Col) :- %% If we are the first one to play we place randomly our Piece
 	getAvailablePieces(Board,AvailablePieces),
 	length(AvailablePieces,Length),
@@ -35,7 +40,7 @@ readPosition_jeremie(inline,Board,PieceID,Row,Col) :- %% If we are the first one
 	createArbreLvl2_board(Lvl1,NewListOfPieces,_),
 	random_between(1,4,Col),
 	random_between(1,4,Row),
-	isEmpty(Board,Row,Col).
+	isEmpty(Board,Row,Col),!.
 
 readPosition_jeremie(inline,Board,PieceID,Row,Col) :-	%% We are looking for the best placement for our piece
 	createArbre(Board,PieceID,1,1,Lvl1), %% We are creating the first level of our tree (All the possibility to where to put our piece)
@@ -45,7 +50,10 @@ readPosition_jeremie(inline,Board,PieceID,Row,Col) :-	%% We are looking for the 
 	return_place(Board,Row,Col), %% We are looking for the best placement for our Piece
 	Row > 0, Row < 5,
 	Col > 0, Col < 5,
-	isEmpty(Board,Row,Col).
+	isEmpty(Board,Row,Col),!.
+
+readPosition_jeremie(inline,Board,PieceID,Row,Col):-
+	readPosition_random(inline,Board,PieceID,Row,Col).
 	
 %% These following functions are creating all "Son Board" with a given piece and a given Board
 %% At the end we will have a List with all the Boards generated
