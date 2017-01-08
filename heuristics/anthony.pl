@@ -148,35 +148,42 @@ checkPiece(PieceID,AvailablePieces,LoosePieces):-
 	\+memberchk(PieceID,LoosePieces).
 
 %% findPiece searching for a Piece with few Attributes in common for 5 first turn and after choose with most Attributes in common
+%% before the 5th turn
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	invertPiece(MyPieceID,PieceID).
 
+%% find 1 share
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	share1(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
 
+%% find 2 share
 findPiece(N,MyPieceID,PieceID):-
 	N>0,N<5,
 	share2(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
 
+%% from 5th turn
+%% find 3 share
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share3(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
-
+%% find 2 share
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share2(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
 
+%% find 1 share
 findPiece(N,MyPieceID,PieceID):-
 	N>4,
 	share1(MyPieceID,PiecesList),
 	memberchk(PieceID,PiecesList).
 
+%% find random
 randomPiece(RandomPiece,AvailablePieces):-
 	random_member(RandomPiece,AvailablePieces),!.
 
@@ -209,9 +216,10 @@ choosePosition(Board,PieceID,Row,Col):-
 	findPosition(N,Board,PieceID,Row,Col).
 
 %% searching for a position 
+%% first checking of the turn with N
 findPosition(N,Board,_,Row,Col):-
-	N<5,N>0,
-	optimalPos(4,Board,0,Row,Col).
+	N<5,N>0, /*searching for a position with no pieces in alignement*/
+	optimalPos(4,Board,0,Row,Col). /*search a position with 4 pieces sahres attributes in common with 0*/
 
 findPosition(N,Board,PieceID,Row,Col):-
 	N>12,
@@ -219,18 +227,19 @@ findPosition(N,Board,PieceID,Row,Col):-
 
 findPosition(N,Board,PieceID,Row,Col):-
 	N>5,
-	optimalPos(2,Board,PieceID,Row,Col).
+	optimalPos(2,Board,PieceID,Row,Col). /*find a position share an attribute with 2 pieces*/
 
 findPosition(N,Board,PieceID,Row,Col):-
 	N>5,
-	optimalPos(1,Board,PieceID,Row,Col).
+	optimalPos(1,Board,PieceID,Row,Col). /*find a position share an attribute with 1 pieces*/
 
 findPosition(N,Board,PieceID,Row,Col):-
 	N>5,N<11,
 	findDefensePosition(Board,PieceID,Row,Col).
 
+%% if any position was founded so the ai searching for an random position
+%% probably loosing position
 findPosition(_,Board,_,Row,Col):-
-
 	isEmpty(Board,Row,Col),
 	random_member(Row,[2,3,1,4]),
 	random_member(Col,[2,3,1,4]).
@@ -258,6 +267,7 @@ checkDiag(_,_,Row,Col,_):-
 searchNAttribute(N,[],_):-
 	N is 0.
 
+%% searching for attribute with no pieces used for having no pieces in same line with an other
 searchNAttribute(N,[0|RestOfPieces],nul):-
 	searchNAttribute(Nr,RestOfPieces,nul),
 	N is Nr+1.
