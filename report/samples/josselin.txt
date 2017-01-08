@@ -1,0 +1,8 @@
+The idea of this AI is of course to get the piece and position to play each round. 
+
+
+
+
+
+
+At the beggining, my heuristics was supposed to be based on a minimax algorithm. I implemented it a few times in other languages and it doesn't seemed to complicated. But the way our Quarto is implemented made this more difficult than explected.

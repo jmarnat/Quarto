@@ -171,17 +171,18 @@ play(I,H1,H2) :-
 	write(H2),write(')\e[0m').
 
 
-/* checking if the board is full = no winner */
-round(_Interface,_,Board,_,_,0) :-
-	getAvailablePieces(Board,ListOfPieces),
-	length(ListOfPieces,0),
-	write('!! NOBODY WINS !!').
 
 /* checking if someone actually won */
 round(Interface,_,Board,Winner,_,Winner) :-
 	check_win(Board,A,B,C),
 	printGameOver(Winner,A,B,C),
 	display_board_int(Interface,Board).
+
+/* checking if the board is full = no winner */
+round(_Interface,_,Board,_,_,0) :-
+	getAvailablePieces(Board,ListOfPieces),
+	length(ListOfPieces,0),
+	write('!! NOBODY WINS !!').
 
 /* otherwise, just do an other round */
 round(Interface,HeuristicsTab,Board,NumPlayer1,LastPieceID,Winner) :-
