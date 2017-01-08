@@ -1,8 +1,13 @@
-The idea of this AI is of course to get the piece and position to play each round. 
+The idea of this AI is of course to get the piece and position to play each round. I's a simplified version of minimax: we don't build and search any tree, we just try to get a winning piece/position. \\
+First, we're searching for the piece which is associated with the biggest value (or score). The values are distributed from the highest to the lowest according this rules: we are shure to win; we coul'd win the next round; the other player can't win next round; random selection. And it's the same kind of association for the positions. \\
+The idea is that to check if we are shure to win with a piece, we check that, for all positions selected by the adversary, whatever the piece he gives us after putting his on the board, we can win with it. \\
 
 
 
 
 
 
-At the beggining, my heuristics was supposed to be based on a minimax algorithm. I implemented it a few times in other languages and it doesn't seemed to complicated. But the way our Quarto is implemented made this more difficult than explected.
+difficulties:
+At the beggining, my heuristics was supposed to be based on a minimax algorithm. I implemented it a few times in other languages and it doesn't seemed to complicated. But the way our Quarto is implemented made this more difficult than explected, so i rethought all my code and simplified it a lot. \\
+I passed a lot of time on the evaluation / scoring predicates. Build them recursively was really hard and i decided to make it simpler just by checking on a few rounds by hand. \\
+Then the GUI. 

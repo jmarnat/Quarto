@@ -1,10 +1,6 @@
 % TODO :
-% IA jos
-% IA jerem
 % intro
 % ccl
-% inline
-% tests exec
 
 
 
@@ -53,7 +49,8 @@
 
 	\newpage
 	\section{Introduction}
-		% TODO
+		We began this project by choosing a game. But no so easy beacause we want a game that we don't know, and a game with some strategy, and after some search: Quarto appears, a board game with simple rules, and lot of possible strategies. \\
+		So begin some test, and josselin with his crazy mind decided to build a Quarto in wood. And the first step has begin, we play lot of time between us, to elaborate some strategy or being familiar with this game.
 
 	\section{Presentation of the game}
 		\textit{The following description is adapted from the website \href{http://www.ludoteka.com/quarto-en.html}{http://www.ludoteka.com/quarto-en.html}.}
@@ -71,14 +68,23 @@
 
 		\paragraph{Final:} The game finishes in a draw when nobody reaches the objective after placing the 16 pieces.
 
-	\section{Algorithm of the game-play}
+	\section{How to run the program and play}
+		\begin{enumerate}
+			\item First, open a terminal and change your current working directory to the one who contains the files \tw{main.pl}, \tw{quarto.pl}, \textit{etc.};
+			\item Then, run your \textsc{Prolog} machine, and consult the main file by typping `\tw{[main].}'
+			\item Finally, you can run the game by calling the predicate `\tw{play(Interface,Heuristics1,Heuristics2)'}. (type `\tw{how\_to\_play.}' for further informations).
+			\item If one of your heuristics are \tw{human}, it'll be asked to you to input a \tw{PieceID}, and later a position \tw{[Row,Col]}, until the game ends.
+		\end{enumerate}
+
+
+	\section{The game-play algorithm}
 		If you look at the file named \tw{quarto.pl}, you'll see the following predicate:\\
 			\tw{play(Interface,Heuristics1,Heuristics2)},\\
 		who are running the game. \\
 		But the actual predicate who does the job is \tw{round(Interface,...)}, and here is how it works:
 		\begin{enumerate}
-			\item first, we check if the board is full $\rightarrow$ \textsc{Game Over}
-			\item then, we check if somebody wins $\rightarrow$ \textsc{Game Over}
+			\item first, we check if somebody wins $\rightarrow$ \textsc{Game Over}
+			\item then, we check if the board is full $\rightarrow$ \textsc{Game Over}
 			\item if none of this first predicates come \tw{true}, we launch a round, splitted in two parts:
 			\begin{enumerate}
 				\item first part: the player need to choose a piece:
@@ -106,7 +112,9 @@
 		Why the five first turn are preparing the board? Because when you mimizing the number of alignement the fifth turn can share attributes between 2 and more lines. Thanks to all pieces giving because you giving all pieces that sharing fewer attributes as possible and the opponement have to pose them choosing by align with other pieces and not. In wich case it can helps us to do more alignement. \\
 		For next turns, the AI became more agressive by giving non loosing pieces and maximizing the number of attributes share with the last piece receive by the AI. And choosing position where we can maximizing the number of share aligments with the maximum of share. If the Board is too bad the AI (loosing next turn), then the AI play in a position that can free some pieces to give and possibly can switch the Board into good board (winning next turn).
 
-		\paragraph{Josselin (\tw{josselin.pl}):} 
+		\paragraph{Josselin (\tw{josselin.pl}):} The idea of this AI is of course to get the piece and position to play each round. I's a simplified version of minimax: we don't build and search any tree, we just try to get a winning piece/position. \\
+		First, we're searching for the piece which is associated with the biggest value (or score). The values are distributed from the highest to the lowest according this rules: we are shure to win; we coul'd win the next round; the other player can't win next round; random selection. And it's the same kind of association for the positions. \\
+		The idea is that to check if we are shure to win with a piece, we check that, for all positions selected by the adversary, whatever the piece he gives us after putting his on the board, we can win with it.
 
 		\paragraph{Clément (\tw{clement.pl}):} A main predicate is used in this heuristic. This is the ListWin predicate it goes through all the board and look for winning pieces. These winning positions are put in a list (coordinates with winning caracteristics). \\
 		When you need to place the piece that was given to you, the read position predicate look for a position where the piece can win if placed there. \\
@@ -129,23 +137,33 @@
 	
 	\section{User Interfaces}
 		\subsection{Inline mode}
-		\subsection{GUI: a XPCE adventure...}
+			The first interface, and still the efficient one, is the 'inline-mode' interface. Each round, we print in the terminal the board with the pieces described as binary values (0 or 1 for each attribute), display the available pieces, ask for a piece, and a position to the adversary. 
+
+		\subsection{GUI: an XPCE (mis)adventure...}
+			Since \textsc{Prolog} is a pretty ``outside the box'' language, there isn't a lot of libraries who allows it to make a proper GUI with interactions. \\
+			I decided to use the only library who worked for me: \textsc{XPCE}, and after \textbf{a lot of time}, i was able to display the window with the board and the pieces, and trigger predicated by clicking on the cells or the pieces. But get the triggers into the execution of the rounds was just impossible. We can't say 'wait for somebody to click in the window and continue the round', at I wasn't able to do that after all this time to try. \\
+			The fact is that we can actually output the number of the piece clicked into the terminal, and a line return to emulate a physical user, but \textsc{Prolog} do not recognize it as an actual input, while waiting for an \tw{read()}. \\
+			Though, I wouldn't consider it as a failure, because maybe there is a way to make it work, but it still not a full graphical interface.
 	
-	\section{Efficiency and challenges}	
-		\subsection{Stats foreach heuristics}
+	\newpage
+	\section{Tests, efficiency and challenges}	
+		\subsection{Statistics foreach heuristics}
+			The predicate \tw{time(.)} displays some informations about the execution of a predicate. \\
+			We use it in \tw{stats(Heuristics1,Heuristics2,NumTime)} to run the game between this two heuristics, a \tw{NumTime} number of time, and then it will display who won how many time (with \tw{test\_play(...)}), and the number	of inferences, the CPU usage and the time of the execution. With this predicate, we were able to ran 100 times the game with each pair of heuristics we've made (exept for \tw{human}). Then, we've put the data in the three following tables for comparison.
+
 			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
 				\hline
-				\#win		& random	& anthony	& josselin	& clement	& jeremie		\\\hline\hline
-				random		& 50		& 2			& 1			& 32		& x				\\\hline
-				anthony		& 100		& 29		& 68		& 100		& x				\\\hline
-				josselin	& 100		& 4			& 100		& 99		& x				\\\hline
-				clement		& 58		& 29		& 25		& 55		& x				\\\hline
-				jeremie		& 47		& 0			& 0			& 41		& x				\\\hline
+				\#Wins		& random	& anthony	& josselin	& clement	& jeremie	\\\hline\hline
+				random		& 50		& 2			& 1			& 32		& x			\\\hline
+				anthony		& 100		& 29		& 68		& 100		& x			\\\hline
+				josselin	& 100		& 4			& 100		& 99		& x			\\\hline
+				clement		& 58		& 29		& 25		& 55		& x			\\\hline
+				jeremie		& 47		& 0			& 0			& 41		& x			\\\hline
 			}
 
 			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
 				\hline
-				TIME		& random	& anthony	& josselin		& clement	& jeremie	\\\hline\hline
+				Time		& random	& anthony	& josselin		& clement	& jeremie	\\\hline\hline
 				random		& 0.4 s		& 4.7 s		& 33.3 s		& 0.8 s		& x			\\\hline
 				anthony		& 4.6 s		& 43.4 s	& 49.1 s		& 4.5 s		& x			\\\hline
 				josselin	& 39.6 s	& 48.8 s	& 89.4 s		& 39.7 s	& x			\\\hline
@@ -153,22 +171,36 @@
 				jeremie		& 87.5 s	& 75.6 s	& 109.7 s		& 77.7 s	& x			\\\hline
 			}
 
-			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
+			\mytable{each heuristics vs. random, over 100 iterations (M = $10^6$)}{|l||r|r|r|r|r|}{
 				\hline
-				INFERENCES		& random	& anthony	& josselin	& clement	& jeremie	\\\hline\hline
+				Inferences		& random	& anthony	& josselin	& clement	& jeremie	\\\hline\hline
 				random			& 2 M		& 36 M		& 304 M		& 5 M		& x			\\\hline
 				anthony			& 34 M		& 398 M		& 445 M		& 39 M		& x			\\\hline
 				josselin		& 341 M		& 430 M		& 827 M		& 342 M		& x			\\\hline
 				clement			& 5 M		& 38 M		& 315 M		& 8 M		& x			\\\hline
 				jeremie			& 149 M		& 171 M		& 419 M		& 149 M		& x			\\\hline
 			}
-				
+
+			And we don't have to say much about it, the data speaks by itself...
+		
+		\subsection{Challenges and difficulties}
+			\paragraph{Jérémie: } During this project I encountered a lot of issues, but most of them were issues cause by the difference between \textsc{Prolog}, and other languages that I was used to use during my bachelor. So it was hard to me to visualize how a list can behave, where I have to add Bracket or where I have to remove them. Managing the lists was the most difficult things, with writing every function in a recursive way.
+
+			\paragraph{Josselin:} At the beggining, my heuristics was supposed to be based on a minimax algorithm. I implemented it a few times in other languages and it doesn't seemed to complicated. But the way our Quarto is implemented made this more difficult than explected, so i rethought all my code and simplified it a lot. \\
+			I passed a lot of time on the evaluation / scoring predicates. Build them recursively was really hard and i decided to make it simpler just by checking on a few rounds by hand. \\
+			The other main difficuly i faced of is the GUI. I passed really a huge amount of time to test a lot of different things to try to make it work, but unsuccessfully
+
+			\paragraph{Clément:} During the creation of this heuristic i get to meet some difficulties on the winlist creation and stop point. Especially in the case where there is no solution for the predicate. You have to choose for a random position if not the predicate returns false. Example if there is no winning position, WinList is then empty so the predicate have to choose a random solution
+
+			\paragraph{Anthony:} The biggest problem was to elaborate this strategy, because I have to do a lot a test by playing (against real players). And the problem that take me most of my time was to find a way of coding my strategy. So again lot of test and try to correct all errors I have made and after, optimizing the code and try to have better score. And the last was to found an optimization of sharing attributes with a piece.
 	
 	\section{Conclusion}
-		% git
-		% time
-		% gui interactions
+		This project was interesting from many point of views. First, we had to immerge us totally in the ``\textsc{Prolog} world'', because it's like any other languages we know. Writing algorithms only by saying things that are true is a very unusual way to think a program. Some of us didn't knew this language before and in this way it was a real challenge. \\
+		Moreover, having four different heuristics was at the same time a bit complicated (we needed to be very creative), but interesting as well because each of us had a very different view on how to implement a powerful AI against the adversary. \\
+		Finally, we ended up with pretty nice heuristics who will for sure beat a ordinary human a lot of times (especially since humans do mistakes!).
 
+	\newpage
+	\section{Appendices}
 		\mytable{Approximate time for coding each files}{|l||l|r|}{\hline
 			\tw{quarto.pl}				& Josselin		& 10-12 h	\\\hline
 			\tw{inline\_interface.pl}	& Josselin		& 3-4 h		\\\hline
@@ -180,6 +212,9 @@
 			\tw{jeremie.pl}				& Jérémie		& 30-35 h	\\\hline
 			\tw{josselin.pl}			& Josselin		& 8-10 h	\\\hline
 		}
+
+		% TODO photos of the quarto 
+		% interface
 
 
 \end{document}
