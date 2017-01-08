@@ -40,7 +40,7 @@ The game follow this order :
 * Heuristics :
 	* [x] human
 	* [x] random
-	* [x] ai_antho
+	* [x] anthony
 	* [x] clement
-	* [ ] &alpha;&beta; (Jérémie)
+	* [x] jeremie
 	* [x] josselin
