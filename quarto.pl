@@ -113,6 +113,7 @@ test_play(Interface,Heuristics1,Heuristics2,NumTime,[Winner|Rest]) :-
 
 /* just remaping the display_board predicates */
 display_board_int(inline,Board) :-
+	wipe,
 	draw_board(inline,Board).
 
 display_board_int(gui,Board) :-
@@ -175,8 +176,8 @@ play(I,H1,H2) :-
 /* checking if someone actually won */
 round(Interface,_,Board,Winner,_,Winner) :-
 	check_win(Board,A,B,C),
-	printGameOver(Winner,A,B,C),
-	display_board_int(Interface,Board).
+	display_board_int(Interface,Board),
+	printGameOver(Winner,A,B,C).
 
 /* checking if the board is full = no winner */
 round(_Interface,_,Board,_,_,0) :-

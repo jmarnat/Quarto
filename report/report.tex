@@ -1,5 +1,4 @@
 % TODO :
-% intro
 % ccl
 
 
@@ -7,7 +6,20 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
+\usepackage{graphicx}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb}
+
+
+\lhead{\textsc{Introduction to A.I.}}
+\rhead{\textsc{Quarto!}}
+\cfoot{}
+\rfoot{\thepage}
+\lfoot{J. Blanchard, A. Deveaux, J. Marnat, C. Schmit}
+\renewcommand{\headrulewidth}{.5pt}
+\renewcommand{\footrulewidth}{.5pt}
+\newcommand{\HRule}{\rule{\linewidth}{0.5pt}}
 
 \newcommand{\tw}[1]{\texttt{#1}}
 \newcommand{\mytable}[3]{
@@ -21,41 +33,65 @@
 	\end{table}
 }
 
-\newcommand{\board}[4]{
-	\begin{tabular}{|c|c|c|c|} \hline
-		#1 \\\hline
-		#2 \\\hline
-		#3 \\\hline
-		#4 \\\hline
-	\end{tabular}
+\newcommand{\mypic}[3]{
+	\begin{picture}[ht]
+		\begin{center}
+			\includegraphics[#3]{include/#2}
+		\caption{#1}
+		\end{center}
+	\end{picture}
 }
 
-\title{\textsc{Introduction to Artificial Intelligence}\\Quarto}
-\author{\begin{tabular}{r|l}
-	Jérémie		& Blanchard		\\
-	Anthony		& Deveaux		\\
-	Josselin	& Marnat		\\
-	Clément		& Schmit
-\end{tabular}}
-\date{2016-2017}
-
+\newcommand{\board}[4]{
+	\begin{center}
+		\begin{tabular}{|c|c|c|c|} \hline
+			#1 \\\hline
+			#2 \\\hline
+			#3 \\\hline
+			#4 \\\hline
+		\end{tabular}
+	\end{center}
+}
 
 
 \begin{document}
-	\maketitle
+	\thispagestyle{empty}
+	\vspace{2cm}
+	\begin{center}
+		\LARGE{\textsc{Université Jean Monnet}}\\[2cm]
+		\Large{\textsc{Machine Learning \& Data Mining}} \\[2cm]
+		\HRule \\[0.5cm]
+		{ \huge \bfseries Introduction to A.I.}\\[0.4cm]
+		\textsc{Quarto!}\\
+		\HRule \\[1.5cm]
+		\normalsize
+		\begin{tabular}{r|l}
+			Jérémie		& \textsc{Blanchard}\\
+			Anthony		& \textsc{Deveaux}\\
+			Josselin	& \textsc{Marnat}\\
+			Clément		& \textsc{Schmit}	
+		\end{tabular}
+		\vfill
+		\includegraphics[width=5cm]{include/logoUJM-2016.png}
+		\vfill
+		2016-2017
+	\end{center}
+	\newpage
 
 	\renewcommand\contentsname{\begin{center}Table of Contents\end{center}}
 	\tableofcontents
 
 	\newpage
+	\pagestyle{fancy}
+
 	\section{Introduction}
-		We began this project by choosing a game. But no so easy beacause we want a game that we don't know, and a game with some strategy, and after some search: Quarto appears, a board game with simple rules, and lot of possible strategies. \\
-		So begin some test, and josselin with his crazy mind decided to build a Quarto in wood. And the first step has begin, we play lot of time between us, to elaborate some strategy or being familiar with this game.
+		We began this project by choosing a game. But it wasn't so easy because we wanted a game that we didn't knew, and a strategical one. After some search: \textsc{Quarto!} came up. A board game with pretty simple rules, and lot of possible strategies. \\
+		The first step to test the game was to... have the game! So we have build one in wood, and we started to play lot of time between us, in order to elaborate the strategies we will implement, and become more familiar with the game.
 
 	\section{Presentation of the game}
 		\textit{The following description is adapted from the website \href{http://www.ludoteka.com/quarto-en.html}{http://www.ludoteka.com/quarto-en.html}.}
 
-		\paragraph{Origin:} Quarto is a board game recently invented by Blaise Muller and published by Gigamic
+		\paragraph{Origin:} \textsc{Quarto!} is a board game recently invented by Blaise Muller and published by Gigamic
 
 		\paragraph{Description:} This is a game for two players. The board has 16 squares (4x4), and the 16 different pieces that can be constructed combinating the following four characteristics: \tw{colour} (white/black), \tw{size} (long/short), \tw{shape} (round/square), and \tw{hole} (hole/flat).
 		
@@ -120,13 +156,13 @@
 		When you need to place the piece that was given to you, the read position predicate look for a position where the piece can win if placed there. \\
 		On the other way when you need to choose a piece for your opponnent you use again the ListWin but this time the piece you give must not have a common caracteristics with one of the winnings piece in the ListWin so that your opponent can't win with this piece on his turn. \\
 		Example :
-		\board{1 & 0 & 0 & 10}{0 & 2 & 11 & 0}{0 & 0 & 3 & 0}{12 & 0 & 0 & 0} \\
+		\board{1 & 0 & 0 & 10}{0 & 2 & 11 & 0}{0 & 0 & 3 & 0}{12 & 0 & 0 & 0}
 		With this board the winlist is:\\
 		\tw{[[white, 4, 4], [short, 4, 4], [black, 3, 2], [short, 3, 2]]} \\
 		You can win by either placing a white piece in 4,4 or a short one in 4,4 \textit{etc.}\\
 		In this board we cannot find a piece to win we have to loose considering there is a winnable position with a black piece and a white piece. Considering a piece is either white or black there is no solution. \\
 		In this case we call a random piece because the previous predicate will fail. \\
-		Exemple: \board{1 & 0 & 0 & 10}{0 & 2 & 11 & 0}{0 & 0 & 0 & 0}{12 & 0 & 0 & 0} \\
+		Exemple: \board{1 & 0 & 0 & 10}{0 & 2 & 11 & 0}{0 & 0 & 0 & 0}{12 & 0 & 0 & 0}
 		With this board the winlist is \tw{[[black, 3, 2], [short, 3, 2]]} \\
 		So after placing the piece we would choose one that doesn't allow our opponnent to win. \\
 		In this case we need a piece that isn't black or that isn't short.
@@ -141,56 +177,57 @@
 
 		\subsection{GUI: an XPCE (mis)adventure...}
 			Since \textsc{Prolog} is a pretty ``outside the box'' language, there isn't a lot of libraries who allows it to make a proper GUI with interactions. \\
-			I decided to use the only library who worked for me: \textsc{XPCE}, and after \textbf{a lot of time}, i was able to display the window with the board and the pieces, and trigger predicated by clicking on the cells or the pieces. But get the triggers into the execution of the rounds was just impossible. We can't say 'wait for somebody to click in the window and continue the round', at I wasn't able to do that after all this time to try. \\
+			I decided to use the only library who worked for me: \textsc{XPCE}, and after \textbf{a lot of time}, I was able to display the window with the board and the pieces, and trigger predicated by clicking on the cells or the pieces. But get the triggers into the execution of the rounds was just impossible. We can't say to \textsc{Prolog}: ``wait for somebody to click in the window and continue the round''. So at the end, I wasn't able to do that after all this time to try. \\
 			The fact is that we can actually output the number of the piece clicked into the terminal, and a line return to emulate a physical user, but \textsc{Prolog} do not recognize it as an actual input, while waiting for an \tw{read()}. \\
-			Though, I wouldn't consider it as a failure, because maybe there is a way to make it work, but it still not a full graphical interface.
+			Though, I wouldn't consider it as a failure, because maybe there is a way to make it work, but it still not a full graphical interface. \\
+			If you want to try the UI on your computer, you need to run it either on Linux, or on Mac (having \textsc{XQuartz} installed before). And you must type `\tw{free.}' in before quitting prolog to dismiss the window.
 	
-	\newpage
 	\section{Tests, efficiency and challenges}	
 		\subsection{Statistics foreach heuristics}
 			The predicate \tw{time(.)} displays some informations about the execution of a predicate. \\
 			We use it in \tw{stats(Heuristics1,Heuristics2,NumTime)} to run the game between this two heuristics, a \tw{NumTime} number of time, and then it will display who won how many time (with \tw{test\_play(...)}), and the number	of inferences, the CPU usage and the time of the execution. With this predicate, we were able to ran 100 times the game with each pair of heuristics we've made (exept for \tw{human}). Then, we've put the data in the three following tables for comparison.
 
-			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
+			\mytable{Number of wins for 100 iterations}{|l||r|r|r|r|r|}{
 				\hline
 				\#Wins		& random	& anthony	& josselin	& clement	& jeremie	\\\hline\hline
-				random		& 50		& 2			& 1			& 32		& x			\\\hline
-				anthony		& 100		& 29		& 68		& 100		& x			\\\hline
-				josselin	& 100		& 4			& 100		& 99		& x			\\\hline
-				clement		& 58		& 29		& 25		& 55		& x			\\\hline
-				jeremie		& 47		& 0			& 0			& 41		& x			\\\hline
+				random		& 50		& 2			& 1			& 32		& 44		\\\hline
+				anthony		& 100		& 29		& 68		& 100		& 99		\\\hline
+				josselin	& 100		& 4			& 100		& 99		& 76		\\\hline
+				clement		& 58		& 29		& 25		& 55		& 53		\\\hline
+				jeremie		& 47		& 0			& 0			& 41		& 62		\\\hline
 			}
 
-			\mytable{each heuristics vs. random, over 100 iterations}{|l||r|r|r|r|r|}{
+			\mytable{Execution time for 100 iterations}{|l||r|r|r|r|r|}{
 				\hline
 				Time		& random	& anthony	& josselin		& clement	& jeremie	\\\hline\hline
-				random		& 0.4 s		& 4.7 s		& 33.3 s		& 0.8 s		& x			\\\hline
-				anthony		& 4.6 s		& 43.4 s	& 49.1 s		& 4.5 s		& x			\\\hline
-				josselin	& 39.6 s	& 48.8 s	& 89.4 s		& 39.7 s	& x			\\\hline
-				clement		& 0.7 s		& 4.6 s		& 34.6 s		& 1.1 s		& x			\\\hline
-				jeremie		& 87.5 s	& 75.6 s	& 109.7 s		& 77.7 s	& x			\\\hline
+				random		& .4 s		& 4 s		& 33 s			& 0.8 s		& 102 s		\\\hline
+				anthony		& 4 s		& 43 s		& 49 s			& 4 s		& 81 s		\\\hline
+				josselin	& 39 s		& 48 s		& 89 s			& 39 s		& 147 s		\\\hline
+				clement		& .7 s		& 4 s		& 34 s			& 1 s		& 117 s		\\\hline
+				jeremie		& 87 s		& 75 s		& 109 s			& 77 s		& 116 s		\\\hline
 			}
 
-			\mytable{each heuristics vs. random, over 100 iterations (M = $10^6$)}{|l||r|r|r|r|r|}{
+			\mytable{Number of inferences for 100 iterations (M = $10^6$)}{|l||r|r|r|r|r|}{
 				\hline
 				Inferences		& random	& anthony	& josselin	& clement	& jeremie	\\\hline\hline
-				random			& 2 M		& 36 M		& 304 M		& 5 M		& x			\\\hline
-				anthony			& 34 M		& 398 M		& 445 M		& 39 M		& x			\\\hline
-				josselin		& 341 M		& 430 M		& 827 M		& 342 M		& x			\\\hline
-				clement			& 5 M		& 38 M		& 315 M		& 8 M		& x			\\\hline
-				jeremie			& 149 M		& 171 M		& 419 M		& 149 M		& x			\\\hline
+				random			& 2 M		& 36 M		& 304 M		& 5 M		& 185 M		\\\hline
+				anthony			& 34 M		& 398 M		& 445 M		& 39 M		& 206 M		\\\hline
+				josselin		& 341 M		& 430 M		& 827 M		& 342 M		& 530 M		\\\hline
+				clement			& 5 M		& 38 M		& 315 M		& 8 M		& 188 M		\\\hline
+				jeremie			& 149 M		& 171 M		& 419 M		& 149 M		& 271 M		\\\hline
 			}
 
-			And we don't have to say much about it, the data speaks by itself...
+			And we don't have to say much about it, the data speaks by itself... \\
+			Maybe we could just say that even if there are very big numbers in this tables, espacially in time, it's important to remark that it is for a hundred of fully-executed games. So in fact, the time response of the AI when playing a normal game (against an human) is most of the time not even noticeable.
 		
 		\subsection{Challenges and difficulties}
-			\paragraph{Jérémie: } During this project I encountered a lot of issues, but most of them were issues cause by the difference between \textsc{Prolog}, and other languages that I was used to use during my bachelor. So it was hard to me to visualize how a list can behave, where I have to add Bracket or where I have to remove them. Managing the lists was the most difficult things, with writing every function in a recursive way.
+			\paragraph{Jérémie: } During this project I encountered a lot of issues, but most of them were issues cause by the difference between \textsc{Prolog}, and other languages that I was used to use during my bachelor. So it was hard to me to visualize how a list can behave, where I have to add bracket or where I have to remove them. Managing the lists was the most difficult things, with writing every function in a recursive way.
 
-			\paragraph{Josselin:} At the beggining, my heuristics was supposed to be based on a minimax algorithm. I implemented it a few times in other languages and it doesn't seemed to complicated. But the way our Quarto is implemented made this more difficult than explected, so i rethought all my code and simplified it a lot. \\
-			I passed a lot of time on the evaluation / scoring predicates. Build them recursively was really hard and i decided to make it simpler just by checking on a few rounds by hand. \\
-			The other main difficuly i faced of is the GUI. I passed really a huge amount of time to test a lot of different things to try to make it work, but unsuccessfully
+			\paragraph{Josselin:} At the beggining, my heuristics was supposed to be based on a minimax algorithm. I implemented it a few times in other languages and it doesn't seemed to complicated. But the way our \textsc{Quarto!} is implemented made this more difficult than explected, so I rethought all my code and simplified it a lot. \\
+			Build the evaluation and scoring predicates recursively was really hard and I decided to make it simpler just by checking on a few rounds by hand. \\
+			The other main difficuly I faced of is the GUI. I really passed a huge amount of time to test a lot of different things to try to make it work, but unsuccessfully
 
-			\paragraph{Clément:} During the creation of this heuristic i get to meet some difficulties on the winlist creation and stop point. Especially in the case where there is no solution for the predicate. You have to choose for a random position if not the predicate returns false. Example if there is no winning position, WinList is then empty so the predicate have to choose a random solution
+			\paragraph{Clément:} During the creation of this heuristic I get to meet some difficulties on the \tw{winlist} creation and stop point. Especially in the case where there is no solution for the predicate. You have to choose for a random position if not the predicate returns \tw{false}. Example if there is no winning position, \tw{WinList} is then empty so the predicate have to choose a random solution
 
 			\paragraph{Anthony:} The biggest problem was to elaborate this strategy, because I have to do a lot a test by playing (against real players). And the problem that take me most of my time was to find a way of coding my strategy. So again lot of test and try to correct all errors I have made and after, optimizing the code and try to have better score. And the last was to found an optimization of sharing attributes with a piece.
 	
@@ -198,6 +235,11 @@
 		This project was interesting from many point of views. First, we had to immerge us totally in the ``\textsc{Prolog} world'', because it's like any other languages we know. Writing algorithms only by saying things that are true is a very unusual way to think a program. Some of us didn't knew this language before and in this way it was a real challenge. \\
 		Moreover, having four different heuristics was at the same time a bit complicated (we needed to be very creative), but interesting as well because each of us had a very different view on how to implement a powerful AI against the adversary. \\
 		Finally, we ended up with pretty nice heuristics who will for sure beat a ordinary human a lot of times (especially since humans do mistakes!).
+
+		\vfill
+		\begin{flushright}
+			\footnotesize{Written in \LaTeX\ by J. \textsc{Marnat} $\blacksquare$}
+		\end{flushright}
 
 	\newpage
 	\section{Appendices}
@@ -213,8 +255,29 @@
 			\tw{josselin.pl}			& Josselin		& 8-10 h	\\\hline
 		}
 
-		% TODO photos of the quarto 
-		% interface
+		\begin{figure}[ht]
+			\begin{center}
+				\includegraphics[width=5cm]{include/inline1.png}
+				\includegraphics[width=5cm]{include/inline2.png}
+				\includegraphics[width=5cm]{include/inline3.png}
+			\caption{The inline interface}
+			\end{center}
+		\end{figure}
+
+		\begin{figure}[ht]
+			\begin{center}
+				\includegraphics[width=9cm]{include/gui1.png}
+				\includegraphics[width=6cm]{include/gui2.png}
+			\caption{The GUI along the terminal}
+			\end{center}
+		\end{figure}
+
+		\begin{figure}[ht]
+			\begin{center}
+				\includegraphics[width=\linewidth]{include/homemade-quarto.jpg}
+			\end{center}
+			\caption{My homemade wooden \textsc{Quarto!}}
+		\end{figure}
 
 
 \end{document}

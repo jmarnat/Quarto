@@ -1,4 +1,4 @@
-askPiece_clement(inline,Board,PieceID,LastPieceId) :-   %% WE PICK A PIECE THAT HAS NOTHING COMMON WITH A WINNING PIECE
+askPiece_clement(inline,Board,PieceID,_) :-   %% WE PICK A PIECE THAT HAS NOTHING COMMON WITH A WINNING PIECE
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	get_list_win(Board,ListWin), %% WE GET THE LISTWIN
 	not(member([Carac,_,_],ListWin)), %% NO COMMON COLOR
