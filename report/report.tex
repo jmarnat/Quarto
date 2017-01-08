@@ -1,0 +1,67 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+
+\title{\textsc{Introduction to Artificial Intelligence}\\Quarto}
+\author{\begin{tabular}{r|l}
+	Jérémie		& Blanchard		\\
+	Anthony		& Deveaux		\\
+	Josselin	& Marnat		\\
+	Clément		& Schmit
+\end{tabular}}
+\date{2016-2017}
+
+
+\begin{document}
+	\maketitle
+
+	\renewcommand\contentsname{\begin{center}Table of Contents\end{center}}
+	\tableofcontents
+
+	\newpage
+	\section{Introduction}
+
+	\section{Presentation of the game}
+	
+	\section{Algorithm of the game-play}
+
+	\section{Heuristics}
+		\subsection{Random}
+		\subsection{Anthony}
+		\subsection{Josselin}
+		\subsection{Clément}
+		\subsection{Jérémie}
+	
+	\section{User Interfaces}
+		\subsection{Inline mode}
+		\subsection{GUI : a XPCE adventure...}
+	
+	\section{Efficiency and challenges}	
+		\subsection{Stats foreach heuristics}
+			\begin{table}
+				\caption{each heuristics vs. random, over 100 iterations}
+				\begin{tabular}{l||}
+					Heuristics	& \# win	& lose	& nul	& CPU		& Time		\\
+					clement		& 54		& 39	& 7		& 0.703		& 0.023s	\\
+					josselin	& 100		& 0		& 0		& 34.608	& 38.881s	\\
+					anthony		& 
+				\end{tabular}
+			\end{table}
+				
+	
+	\section{Conclusion}
+\end{document}
+
+
+% josselin won 100x
+% random won 0x
+% 336,435,244 inferences, 34.608 CPU in 38.881 seconds (89% CPU, 9721243 Lips)
+
+% clement won 54x
+% random won 39x
+% 5,184,168 inferences, 0.703 CPU in 0.823 seconds (85% CPU, 7376616 Lips)
+
+% anthony won 99x
+% random won 0x
+% 33,485,393 inferences, 3.683 CPU in 4.443 seconds (83% CPU, 9090781 Lips)

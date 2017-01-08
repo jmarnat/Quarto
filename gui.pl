@@ -1,6 +1,8 @@
+
 /* gui.pl */
 /* J.MARNAT */
 
+/* we need to associate an id to each cell to regognize whhere we click */
 cell_id(0,0,@cell1).
 cell_id(0,1,@cell2).
 cell_id(0,2,@cell3).
@@ -18,6 +20,8 @@ cell_id(3,1,@cell14).
 cell_id(3,2,@cell15).
 cell_id(3,3,@cell16).
 
+/* idem for the images */
+/* if we don't do that, we can't manipulate the images once they're created */
 image_id(1,@image1).
 image_id(2,@image2).
 image_id(3,@image3).
@@ -53,6 +57,8 @@ text_id(15,@text15).
 text_id(16,@text16).
 
 
+/* this init predicate will create the window, display the board, */
+/* the player and the available pieces */
 init(FirstHeuristics,Board) :-
 	free,
 	init_window(),
@@ -61,18 +67,23 @@ init(FirstHeuristics,Board) :-
 	display_board(Board),
 	display_available_pieces(Board).
 
-
+/* creation of the game window */
 init_window() :-
 	new(@window, window('Quarto',size(560,700))),
 	send(@window, open),
 	send(@window, display, new(@bg, box(560,700)),point(0,0)),
 	send(@bg, fill_pattern, colour(black)).
-	%% send(@window, display, new(@button1,button(get_cell,message(@prolog,get_cell,2,3)))).
 
+/* write the row and col of the clicked cell */
+/* (used in display_cell) */
 get_cell(Row,Col) :-
 	write('ROW : '), write(Row), nl,
 	write('COL : '), write(Col), nl.
 
+/* the images we get from the website */
+/* http://quarto.freehostia.com/en/ */
+/* are not all the same size */
+/* this decay predicate will compensate that */
 decay(PieceID,15) :-
 	PieceID =< 4.
 decay(PieceID,15) :-
@@ -80,9 +91,7 @@ decay(PieceID,15) :-
 	PieceID =< 12.
 decay(_,0).
 
-free_or_not(P) :- free(P).
-free_or_not(_).
-
+/* showing the player number and heuristics into the window */
 display_player(Num,Heuristics) :-
 	atom_concat('Player ',Num,Txt1),
 	atom_concat(Txt1,' (',Txt2),
@@ -93,7 +102,7 @@ display_player(Num,Heuristics) :-
 	send(@textplayer,colour,colour(white)),
 	send(@textplayer,font,font(helvetica,roman,15)).
 
-
+/* display a piece on the board after axis scaling */
 display_piece_onboard(0,_,_).
 display_piece_onboard(PieceID,X,Y) :-
 	decay(PieceID,D),
@@ -107,7 +116,9 @@ display_piece_to_play(PieceID) :-
 	display_piece(PieceID,10,10).
 
 
-
+/* the actual predicate who puts the image of a piece */
+/* at the exact location (XScaled,YScaled) */
+/* and adds a click-recogniser to the image */
 display_piece(PieceID,XScaled,YScaled) :-
 	atom_concat('images/',PieceID,Path1),
 	atom_concat(Path1,'.xpm',Path),
@@ -123,6 +134,9 @@ display_piece(PieceID,XScaled,YScaled) :-
 	send(TextID,colour,colour(gray)),
 	send(TextID,font,font(helvetica,roman,1)).
 */
+
+/* this will display a black cell in the board with the associated recognizer */
+/* (deactivated now) */
 display_cell(X,Y) :-
 	cell_id(X,Y,ImageID),
 	XScaled is 90 + (X * 100),
@@ -130,20 +144,18 @@ display_cell(X,Y) :-
 	send(@window,display,new(ImageID,bitmap('images/black.xpm')),point(YScaled,XScaled)),
 	send(ImageID,recogniser,click_gesture(left,'',single,message(@prolog,clicked_cell,X,Y))).
 
+/* when the image of a cell regonize a click onto, this will print the location */
 clicked_cell(X,Y) :-
 	write('['),
-	%% write('the cell '),
 	write(X),write(','),write(Y),
-	%% write(' has been selected !\n').
 	write('].'),nl.
 
+/* idem for the piece */
 clicked_piece(PieceID) :-
-	%% 
-	%% write('the piece '),
 	write(PieceID),write('.\n').
-	%% write(' has been selected !\n').
 
-
+/* this is a debug predicate to display all the piece on the board */
+/* (useless) */
 display_test :-
 	display_piece_onboard(1,0,0),
 	display_piece_onboard(2,0,1),
@@ -162,10 +174,15 @@ display_test :-
 	display_piece_onboard(15,3,2),
 	display_piece_onboard(16,3,3).
 
+/* displaying the grid of the board */
+/* i could actually merge the two predicates display_rows and *_cols */
+/* in a single one, but for the sick of clearness of the code, */
+/* i choosed to separate the two */
 display_grid :-
 	display_rows(0),
 	display_cols(0).
 
+/* display all the rows of the grid */
 display_rows(5).
 display_rows(N) :-
 	Y is 90 + N * 100,
@@ -176,6 +193,7 @@ display_rows(N) :-
 	N2 is N + 1,
 	display_rows(N2).
 
+/* display all the cols of the grid */
 display_cols(5).
 display_cols(N) :-
 	X is 70 + N * 100,
@@ -186,35 +204,40 @@ display_cols(N) :-
 	N2 is N + 1,
 	display_cols(N2).
 
-
+/* calling predicate with a NumLine value */
 display_board(Board) :-
 	display_board(0,Board).
 
+/* display all the board recursively line by line */
 display_board(_,[]).
 display_board(NumLine,[FirstLine|Rest]) :-
 	display_line(NumLine,0,FirstLine),
 	NumLine2 is NumLine + 1,
 	display_board(NumLine2,Rest).
 
+/* display all the lines recursively cell by cell */
 display_line(_,_,[]).
 display_line(NumLine,NumCol,[FirstCell|Rest]) :-
 	display_piece_onboard(FirstCell,NumLine,NumCol),
 	NumCol2 is NumCol + 1,
 	display_line(NumLine,NumCol2,Rest).
 
-
+/* display all the available pieces of the game below the board */
+/* we display the white pieces, and then the black ones below */
 display_available_pieces(Board) :-
 	getAvailablePieces(Board,ListOfPieces),
-	get_white_pieces(ListOfPieces,WhitePiecesIDs),
-	get_black_pieces(ListOfPieces,BlackPiecesIDs),
+	get_pieces_with_color(white,ListOfPieces,WhitePiecesIDs),
+	get_pieces_with_color(black,ListOfPieces,BlackPiecesIDs),
 	display_available_pieces_bis(0,WhitePiecesIDs),
 	display_available_pieces_bis(80,BlackPiecesIDs).
 
+/* this computes the y-decay to center the pieces in the window */
 display_available_pieces_bis(DecayX,WhitePiecesIDs) :-
 	length(WhitePiecesIDs,N),
 	DecayY is (8 - N) * 30,
 	display_available_pieces_row(0,DecayX,DecayY,WhitePiecesIDs).
 
+/* then, display all the pieces from the list, recursively */
 display_available_pieces_row(_,_,_,[]).
 display_available_pieces_row(N,DecayX,DecayY,[PieceID|Rest]) :-
 	decay(PieceID,D),
@@ -224,25 +247,17 @@ display_available_pieces_row(N,DecayX,DecayY,[PieceID|Rest]) :-
 	N2 is N + 1,
 	display_available_pieces_row(N2,DecayX,DecayY,Rest).
 
+/* select just the white or black pieces among the list */
+get_pieces_with_color(_,[],[]).
+get_pieces_with_color(Color,[PieceID|Rest],[PieceID|Rest2]) :-
+	piece(PieceID,[Color,_,_,_]),
+	get_pieces_with_color(Color,Rest,Rest2).
+get_pieces_with_color(Color,[_PieceID|Rest],L2) :-
+	get_pieces_with_color(Color,Rest,L2).
 
 
 
-get_white_pieces([],[]).
-get_white_pieces([PieceID|Rest],[PieceID|Rest2]) :-
-	piece(PieceID,[white,_,_,_]),
-	get_white_pieces(Rest,Rest2).
-get_white_pieces([_PieceID|Rest],L2) :-
-	get_white_pieces(Rest,L2).
-
-get_black_pieces([],[]).
-get_black_pieces([PieceID|Rest],[PieceID|Rest2]) :-
-	piece(PieceID,[black,_,_,_]),
-	get_black_pieces(Rest,Rest2).
-get_black_pieces([_PieceID|Rest],L2) :-
-	get_black_pieces(Rest,L2).
-
-
-
+/* will free all allocated objects with XPCE */
 free :-
 	forall(image_id(_,ID),free(ID)),
 	forall(cell_id(_,_,ID),free(ID)),
@@ -250,7 +265,4 @@ free :-
 	free(@textplayer),
 	free(@window),
 	free(@bg).
-
-
-
 

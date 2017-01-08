@@ -1,0 +1,12 @@
+
+*.aux
+
+*.fdb_latexmk
+
+*.fls
+
+report/report.log
+
+report/report.synctex.gz
+
+report/report.toc

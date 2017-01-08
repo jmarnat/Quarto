@@ -56,7 +56,7 @@ how_to_play :-
 	write('Enjoy the game!\n').
 
 /* sometimes we needed to see if a part of the programe was indeed executed */
-/* this function is here to debug our code */
+/* this predicate is here to debug our code */
 debugHere :- 
 	nl,
 	write('DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG'),nl,
@@ -96,7 +96,7 @@ test_play(Interface,Heuristics1,Heuristics2,NumTime) :-
 
 
 
-/* this is the function who actually runs the game NumTime times */
+/* this is the predicate who actually runs the game NumTime times */
 /* it runs the game, then decrement NumTime, and call itself until NumTime = 0 */
 test_play(_,_,_,0,[]).
 test_play(Interface,Heuristics1,Heuristics2,NumTime,[Winner|Rest]) :-
@@ -108,10 +108,10 @@ test_play(Interface,Heuristics1,Heuristics2,NumTime,[Winner|Rest]) :-
 
 
 /*********************************************
-* SOME USEFULL FUNCTIONS USED FOR THE ROUNDS *
+* SOME USEFULL predicateS USED FOR THE ROUNDS *
 *********************************************/
 
-/* just remaping the display_board functions */
+/* just remaping the display_board predicates */
 display_board_int(inline,Board) :-
 	draw_board(inline,Board).
 
@@ -163,7 +163,7 @@ play(Interface,Heuristics1,Heuristics2) :-
 	clear,
 	round(Interface,[Heuristics1,Heuristics2],[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]],1,0,_).
 
-/* is something's wrong in the inputs of this function, it'll display an error */
+/* is something's wrong in the inputs of this predicate, it'll display an error */
 play(I,H1,H2) :-
 	write('\e[031mERROR: wrong heuristics name : play('),
 	write(I),write(','),
@@ -221,7 +221,6 @@ swapPlayer(1,2).
 swapPlayer(2,1).
 
 
-/* CHECKING IF A PLACE IS EMPTY OF NOT*/
 getPieceID([FirstRow|_],1,Col,PieceID) :-
 	getPieceID_row(FirstRow,Col,PieceID).
 getPieceID([_|RestOfRows],Row,Col,PieceID) :-
@@ -233,21 +232,28 @@ getPieceID_row([_|Rest],Col,PieceID) :-
 	getPieceID_row(Rest,Col2,PieceID),
 	Col is (Col2 + 1).
 
-%% and then we can do :
+/* check if a cell is empty */
+/* -> true if the value in the cell is 0 */
 isEmpty(Board,Row,Col) :-
 	getPieceID(Board,Row,Col,0).
 
+/* check if a cell is full */
+/* -> trus if the value is greater than 0 */
 isFull(Board,Row,Col) :-
 	getPieceID(Board,Row,Col,N),
 	N > 0.
 
+/* this predicate is important */
+/* it takes the piece, and "put it on the board", recursively */
+/* in reality, it succeed if the NewBoard is the Board, with the piece */
+/* PieceID at the col Column and row Row */
+/* */
 putPieceOnBoard(PieceID,1,Column,[FirstLine|T1],[NewFirstLine|T1]) :-
 	putPieceOnLine(PieceID,Column,FirstLine,NewFirstLine).
 
 putPieceOnBoard(PieceID,Row,Column,[H|T1],[H|T2]) :-
 	putPieceOnBoard(PieceID,Row2,Column,T1,T2),
 	Row is (Row2 + 1).
-
 
 putPieceOnLine(PieceID,1,[_|T],[PieceID|T]).
 
@@ -261,25 +267,30 @@ putPieceOnLine(PieceID,Column,[H|T],[H|T2]) :-
 * GETTING ALL PIECES AVAILABLE IN GAME *
 ***************************************/
 
+/* succeed if the piece is on the board */
 isInBoard(Board,PieceID) :-
 	getPieceID(Board,_,_,PieceID).
 
-
+/* succeed if the Item is not in the list */
 isNotInList([],_).
 isNotInList([H|T],Item) :-
 	H \= Item,
 	isNotInList(T,Item).
 
+/* this will succeed if a piece is available in the game */
 isAvailable([],_).
 isAvailable([FirstRow|Rest],PieceID) :-
 	isNotInList(FirstRow,PieceID),
 	isAvailable(Rest,PieceID).
 
 
-
+/* returns all the available pieces of the game */
 getAvailablePieces(Board,ListOfPieces) :-
 	getAvailablePiecesBis(Board,ListOfPieces,1).
 
+/* it'll check the availability of all pieces from 1 to 16 inclueded */
+/* if they're availables, we add the piece in the list */
+/* otherwise, we check with the next one */
 getAvailablePiecesBis(_,[],17).
 getAvailablePiecesBis(Board,[PieceID|ListOfPieces],PieceID) :-
 	PieceID < 17,
@@ -358,7 +369,7 @@ check_second_diagonal([[_,_,_,A],[_,_,B|_],[_,C|_],[D|_]],Attribute) :-
 	win_list([A,B,C,D],Attribute).
 
 
-/* then, we check all the four functions in check_win */
+/* then, we check all the four predicates in check_win */
 check_win(Board,Attribute,row,Num) :- check_rows(Board,Attribute,Num).
 check_win(Board,Attribute,column,Num) :- check_columns(Board,Attribute,Num).
 check_win(Board,Attribute,diagonal,1) :- check_first_diagonal(Board,Attribute).

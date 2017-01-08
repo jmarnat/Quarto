@@ -1,10 +1,22 @@
 /* josselin.pl */
 
-
+/* the predicate needed by the game */
+/* will return an optimal piece to give to the next player */
 askPiece_josselin(inline,Board,PieceID) :-
 	chooseBestValuedPiece(Board,PieceID).
 
+/* idem for the position */
+readPosition_josselin(inline,Board,PieceID,Row,Col) :-
+	chooseBestValuedPosition(Board,PieceID,Row,Col).
 
+
+
+/*--------------------------*/
+/* SELECTING THE BEST PIECE */
+/*--------------------------*/
+
+/* we choose the best piece by getting the piece */
+/* with the highest value associated */
 chooseBestValuedPiece(Board,PieceID) :-
 	findall(PID,valuePiece(Board,PID,1),ListPID),
 	member(PieceID,ListPID),
@@ -17,64 +29,10 @@ chooseBestValuedPiece(Board,PieceID) :-
 	write('val = -1000\n').
 
 
-readPosition_josselin(inline,Board,PieceID,Row,Col) :-
-	isEmpty(Board,Row,Col),
-	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
-	check_win(NewBoard,_,_,_).
-
-readPosition_josselin(inline,Board,_,Row,Col) :-
-	readPosition_random(inline,Board,_,Row,Col).
 
 
-
-
-numberOfEmptyCells([],0).
-numberOfEmptyCells([H|T],N2) :-
-	H is 0,
-	numberOfEmptyCells(T,N),
-	N2 is N + 1.
-numberOfEmptyCells([H|T],N) :-
-	H \= 0,
-	numberOfEmptyCells(T,N).
-
-removeEmptyCells([],[]).
-removeEmptyCells([H|T],T2) :-
-	H is 0,
-	removeEmptyCells(T,T2).
-removeEmptyCells([H|T],[H|T2]) :-
-	H \= 0,
-	removeEmptyCells(T,T2).
-
-areCellsAllEmpty([]).
-areCellsAllEmpty([H|T]) :-
-	H is 0,
-	areCellsAllEmpty(T).
-
-
-potentialPiece(Board,L,PieceID) :-
-	getAvailablePieces(Board,ListOfAvailablePieces),
-	potentialAttribute(L,Att),
-	member(PieceID,ListOfAvailablePieces),
-	is_an_attribute(Att,PieceID).
-
-
-potentialAttribute(L,Att) :-
-	numberOfEmptyCells(L,1),
-	removeEmptyCells(L,L2),
-	win_list(L2,Att).
-
-not_win(Board) :- check_win(Board,_,_,_),!,fail.
-not_win(_).
-
-
-
-not_member(_Item,[]).
-not_member(Item,[H|T]) :-
-	Item \== H,
-	not_member(Item,T).
-
-clean_list([],[]).
-
+/* this will remove items of the first list in the second one */
+/* (used in winning_attributes_list) */
 clean_list([],[]).
 clean_list([T|C], S) :-
 	member(T,C),
@@ -83,12 +41,6 @@ clean_list([T|C], S) :-
 clean_list([T|C], [T|Z]) :-
 	clean_list(C,Z).
 
-
-/* check_over */
-check_over(ListAttr) :-
-	member(A,ListAttr),
-	member(B,ListAttr),
-	invertAttribute(A,B).
 
 winning_attributes_list(Board,ListAttr) :-
 	findall(Attr,winning_attributes(Board,Attr),ListAttr1),
@@ -127,8 +79,6 @@ find_secure_piece_bis(Board,PieceID) :-
 	find_piece_without_attributes(Board,ListAttr,PieceID).
 
 
-
-
 /* this piece is forced to make me win */
 valuePiece(Board,PieceID,1000) :-
 	%% first, for every position, the next player can't win
@@ -154,8 +104,69 @@ valuePiece(Board,PieceID,0) :-
 valuePiece(Board,PieceID,-1000) :-
 	getAvailablePieces(Board,ListOfAvailablePieces),
 	member(PieceID,ListOfAvailablePieces),
-
 	isEmpty(Board,Row,Col),
 	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
 	check_win(NewBoard,_,_,_).
+
+
+/*-----------------------------*/
+/* SELECTING THE BEST POSITION */
+/*-----------------------------*/
+chooseBestValuedPosition(Board,PieceID,Row,Col) :-
+	valuePosition(Board,PieceID,Row,Col,1000),
+	write(1000).
+chooseBestValuedPosition(Board,PieceID,Row,Col) :-
+	valuePosition(Board,PieceID,Row,Col,1),
+	write(1).
+chooseBestValuedPosition(Board,PieceID,Row,Col) :-
+	valuePosition(Board,PieceID,Row,Col,0),
+	write(0).
+
+/* succeed if we win with this position */
+valuePosition(Board,PieceID,Row,Col,1000) :-
+	isEmpty(Board,Row,Col),
+	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
+	check_win(NewBoard,_,_,_).
+
+/* succeed if i can win next time */
+/* (two long to be efficient -> deactivated ) */
+valuePosition(Board,PieceID,Row,Col,100) :-
+	/* my round */
+	isEmpty(Board,Row,Col),
+	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
+	
+	/* other player's round */
+	getAvailablePieces(NewBoard,ListOfAvailablePieces),
+	member(NewPieceID,ListOfAvailablePieces),
+	isEmpty(NewBoard,NewRow,NewCol),
+	putPieceOnBoard(NewPieceID,NewRow,NewCol,NewBoard,NewNewBoard),
+	not(check_win(NewNewBoard,_,_,_)),
+
+	/* my round again */
+	getAvailablePieces(NewNewBoard,NNListOfAvailablePieces),
+	member(NNPieceID,NNListOfAvailablePieces),
+	isEmpty(NewNewBoard,NNRow,NNCol),
+	putPieceOnBoard(NNPieceID,NNRow,NNCol,NewNewBoard,NNNBoard),
+	check_win(NNNBoard,_,_,_).
+
+
+/* succeed if the next player can't win next round */
+valuePosition(Board,PieceID,Row,Col,1) :-
+	/* my round */
+	isEmpty(Board,Row,Col),
+	putPieceOnBoard(PieceID,Row,Col,Board,NewBoard),
+	
+	/* other player's round */
+	getAvailablePieces(NewBoard,ListOfAvailablePieces),
+	member(NewPieceID,ListOfAvailablePieces),
+	isEmpty(NewBoard,NewRow,NewCol),
+	putPieceOnBoard(NewPieceID,NewRow,NewCol,NewBoard,NewNewBoard),
+	not(check_win(NewNewBoard,_,_,_)).
+
+/* succeed otherwise (random) */
+valuePosition(Board,_,Row,Col,0) :-
+	readPosition_random(inline,Board,_,Row,Col).
+
+
+
 
