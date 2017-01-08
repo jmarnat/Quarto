@@ -214,7 +214,7 @@ findPosition(N,Board,_,Row,Col):-
 	optimalPos(4,Board,0,Row,Col).
 
 findPosition(N,Board,PieceID,Row,Col):-
-	N>8,
+	N>12,
 	findDefensePosition(Board,PieceID,Row,Col).
 
 findPosition(N,Board,PieceID,Row,Col):-
@@ -226,7 +226,7 @@ findPosition(N,Board,PieceID,Row,Col):-
 	optimalPos(1,Board,PieceID,Row,Col).
 
 findPosition(N,Board,PieceID,Row,Col):-
-	N>5,N<9,
+	N>5,N<11,
 	findDefensePosition(Board,PieceID,Row,Col).
 
 findPosition(_,Board,_,Row,Col):-
